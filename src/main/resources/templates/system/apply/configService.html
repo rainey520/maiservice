@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-apply-service">
+        <input id="id" name="id" th:value="${apply.id}"  type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">服务器：</label>
+            <div class="col-sm-8">
+                <select id="serId" name="serId" onchange="serChange(this)"  class="form-control">
+                    <option value="-1">请选择</option>
+                    <option  th:if="${sers != null}" th:each="ser:${sers}" th:value="${ser.id}" th:utext="${ser.sname}"></option>
+                </select>
+                <span id="ser-msg" style="color: red">请选择服务器</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">服务端口：</label>
+            <div class="col-sm-8">
+                <select id="portId" name="portId"  class="form-control">
+                    <option value="-1">请选择</option>
+                </select>
+                <span id="port-msg" style="color: red">请选择服务端口</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注信息：</label>
+            <div class="col-sm-8">
+                <textarea rows="4" name="remark" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    $(function () {
+        $("#ser-msg").hide();
+        $("#port-msg").hide();
+    })
+
+    /**
+     * 服务器选择改变
+     * @type {string}
+     */
+    function serChange(val) {
+        var sid =$(val).find("option:selected").val();
+        if(sid >0){
+            $("#portId").find("option").remove();
+            var data = [{id:-1,text:'请选择'}];
+            $.post("/system/serPort/selectBySid",{sid:sid},function (res) {
+                if (res.code == web_status.SUCCESS) {
+                   var rows = res.data;
+                   for(var i = 0;i<rows.length;i++){
+                       var item ={id:rows[i].id,text:rows[i].port};
+                       data.push(item);
+                   }
+                } else {
+                    $.modal.alertError(res.msg);
+                }
+                $('#portId').select2({
+                    data: data
+                });
+            })
+        }else{
+            $("#portId").find("option").remove();
+            var data = [{id:-1,text:'请选择'}];
+            $('#portId').select2({
+                data: data
+            });
+        }
+    }
+
+    var prefix = ctx + "system/apply"
+    function submitHandler() {
+        var serId = $("#serId").find("option:selected").val();
+        if(serId <= 0 ){
+            $("#ser-msg").show();
+            return ;
+        }else{
+            $("#ser-msg").hide();
+        }
+        var portId = $("#portId").find("option:selected").val();
+        if(portId <= 0 ){
+            $("#port-msg").show();
+            return ;
+        }else{
+            $("#port-msg").hide();
+        }
+        var config = {
+            url: prefix+"/configService",
+            type: "post",
+            dataType: "json",
+            contentType: 'application/json',
+            data:JSON.stringify($('#form-apply-service').serializeObject()),
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+                $.modal.disable();
+            },
+            success: function (result) {
+                if (result.code == web_status.SUCCESS) {
+                    if (window.parent.$("#bootstrap-table").length > 0) {
+                        $.modal.close();
+                        window.parent.$.modal.msgSuccess(result.msg);
+                        window.parent.$.table.refresh();
+                    }
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+            }
+        };
+        $.ajax(config)
+    }
+</script>
+</body>
+</html>

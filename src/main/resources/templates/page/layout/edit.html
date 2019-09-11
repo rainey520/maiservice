@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+    <meta charset="utf-8">
+    <head th:include="include :: header"></head>
+    <body class="white-bg">
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <form class="form-horizontal m" id="form-user-edit" th:object="${layout}">
+                <input name="id"  type="hidden"  th:field="*{id}" />
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">布局类型：</label>
+                    <div class="col-sm-8">
+                        <select id="layout_type" class="form-control m-b" th:field="*{layout_type}">
+                            <option  value="1">宫格布局</option>
+                            <option  value="2">轮播布局</option>
+                            <option  value="3">生产平衡</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">名称：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="layout_name" id="layout_name" th:field="*{layout_name}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">宫格个数：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="number" id="layout_num" th:field="*{layout_num}" name="layout_num"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">状态：</label>
+                    <div class="col-sm-8">
+                        <div class="onoffswitch">
+                            <input type="checkbox" th:checked="${layout.layout_status == 1 ? true : false}"
+                                   class="onoffswitch-checkbox" id="layout_status" name="layout_status">
+                            <label class="onoffswitch-label" for="layout_status">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div th:include="include::footer"></div>
+        <script th:src="@{/ajax/libs/select/select2.js}"></script>
+        <script>
+            $("#form-user-edit").validate({
+                rules:{
+                    layout_name:{
+                        required:true,
+                    },
+                },
+                submitHandler:function(form){
+                    edit();
+                }
+            });
+
+            function submitHandler() {
+                if ($.validate.form()) {
+                    edit();
+                }
+            }
+
+            function edit() {
+                var id = $("input[name='id']").val();
+                var layout_name = $("input[name='layout_name']").val();
+                var layout_num = $("input[name='layout_num']").val();
+                var layout_type = $("#layout_type option:selected").val();
+                var layout_status = $("input[name='layout_status']").is(':checked') == true ? 1 : 0;
+                $.ajax({
+                    cache : true,
+                    type : "POST",
+                    url : ctx + "layout/type/edit",
+                    data : {
+                        "id": id,
+                        "layout_name": layout_name,
+                        "layout_num": layout_num,
+                        "layout_type": layout_type,
+                        "layout_status": layout_status,
+                    },
+                    async : false,
+                    error : function(request) {
+                        $.modal.alertError("系统错误");
+                    },
+                    success : function(data) {
+                        $.operate.successCallback(data);
+                    }
+                });
+            }
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-serPort-configComany" th:object="${serPort}">
+        <input id="id" name="id" th:field="*{id}"  type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公司信息：</label>
+            <div class="col-sm-8">
+                <select name="companyId" th:field="*{companyId}"  th:with="c = ${@devCompany.selectDevCompanyAll()}" id="companyId" class="form-control">
+                    <option value="" >--请选择--</option>
+                    <option th:each="item:${c}" th:value="${item.companyId}" th:utext="${item.comName}"></option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "system/serPort";
+    $("#form-serPort-configComany").validate({
+        rules:{
+            companyId:{
+                required:true,
+            },
+        },
+        messages:{
+            companyId:{
+                required:"请选择公司",
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.modal.confirm("确定指定该公司吗",function (e) {
+                if(e){
+                    $.operate.save(prefix + "/configCompany", $('#form-serPort-configComany').serialize());
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

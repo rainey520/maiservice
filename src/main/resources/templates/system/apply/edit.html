@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-apply-edit" th:object="${apply}">
+            <input id="id" name="id" th:field="*{id}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">审核状态：</label>
+				<div class="col-sm-8">
+					<select id="examineStatus" name="examineStatus"  class="form-control">
+						<option value="1">未通过</option>
+						<option value="2">通过</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">审核备注：</label>
+				<div class="col-sm-8">
+					<textarea id="examineRemark" name="examineRemark"  class="form-control" rows="6"></textarea>
+					<span id="remark-msg" style="color: red"></span>
+				</div>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "system/apply"
+		function submitHandler() {
+			var status = $("#examineStatus").find("option:selected").val();
+			var remark = $("#examineRemark").val();
+			if(status == 1 && remark==''){
+				$("#remark-msg").text("请填写未通过原因");
+				return ;
+			}else{
+				$("#remark-msg").text("");
+			}
+			var config = {
+				url: prefix+"/edit",
+				type: "post",
+				dataType: "json",
+				contentType: 'application/json',
+				data:JSON.stringify($('#form-apply-edit').serializeObject()),
+				beforeSend: function () {
+					$.modal.loading("正在处理中，请稍后...");
+					$.modal.disable();
+				},
+				success: function (result) {
+					if (result.code == web_status.SUCCESS) {
+						if (window.parent.$("#bootstrap-table").length > 0) {
+							$.modal.close();
+							window.parent.$.modal.msgSuccess(result.msg);
+							window.parent.$.table.refresh();
+						}
+					} else {
+						$.modal.alertError(result.msg);
+					}
+				}
+			};
+			$.ajax(config)
+	    }
+	</script>
+</body>
+</html>

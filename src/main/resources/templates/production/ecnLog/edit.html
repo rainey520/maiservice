@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-ecnLog-edit" th:object="${ecnLog}">
+            <input id="id" name="id" th:field="*{id}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">ecn修改信息：</label>
+				<div class="col-sm-8">
+					<textarea rows="3" id="ecnText" name="ecnText" th:field="*{ecnText}" class="form-control" type="text"></textarea>
+				</div>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "production/ecnLog";
+		$("#form-ecnLog-edit").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			}
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-ecnLog-edit').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

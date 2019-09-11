@@ -1,0 +1,424 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link href="../static/css/link.css" th:href="@{/css/link.css}" rel="stylesheet"/>
+<link href="../static/ajax/libs/layui/css/layui.css" th:href="@{/ajax/libs/layui/css/layui.css}" rel="stylesheet"/>
+<body class="white-bg">
+<style type="text/css">
+    .item {
+        width: 190px;
+        height: 190px;
+        float: left;
+        position: relative;
+        margin: 20px;
+    }
+    .addImg {
+        width: 190px;
+        height: 190px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
+        cursor: pointer;
+    }
+    .preview, .preBlock {
+        position: absolute;
+        display: block;
+        width: 190px;
+        height: 190px;
+        left: 0;
+        top: 0;
+    }
+    .delete {
+        width: 30px;
+        position: absolute;
+        right: -30px;
+        top: -15px;
+        cursor: pointer;
+        display: none;
+    }
+    .preBlock img {
+        display: block;
+        width: 190px;
+        height: 190px;
+    }
+    .upload_input {
+        display: block;
+        width: 0;
+        height: 0;
+        -webkit-opacity: 0.0;
+        /* Netscape and Older than Firefox 0.9 */
+        -moz-opacity: 0.0;
+        /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+        -khtml-opacity: 0.0;
+        /* IE9 + etc...modern browsers */
+        opacity: .0;
+        /* IE 4-9 */
+        filter: alpha(opacity=0);
+        /*This works in IE 8 & 9 too*/
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        /*IE4-IE9*/
+        filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    }
+</style>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+    <div class="rebinding-box">
+        <div class="box-title" style="margin: 15px auto">
+            <h2 class="mtb5">资质认证</h2>
+        </div>
+        <div class="box-timeline">
+            <ul class="text-center" style="width: 800px;">
+                <li>
+                    <span >提交资料</span>
+                    <div class="box-num1">
+                        1
+                    </div>
+                </li>
+                <li class="ml45">
+                    待审核
+                    <div th:class="${apply!= null?'box-outside1':'box-outside1 outside1ab'}" id="outside1abs">
+                        <div class="box-num2 num2ab">
+                            2
+                        </div>
+                    </div>
+                </li>
+                <li class="ml45">
+                    审核结果
+                    <div th:class="${apply!= null and apply.examineStatus!= 0?'box-outside2':'box-outside2 outside2a'}"
+                         id="outside2as">
+                        <div class="box-num3 num3a">
+                            3
+                        </div>
+                    </div>
+                </li>
+                <div class="clear">
+                </div>
+            </ul>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title ibox-title-gray dashboard-header gray-bg" style="padding: 10px 0px 0px 10px">
+                <span style="font-size: 16px;" id="titel-msg" th:if="${apply == null}">第一步：提交资料</span>
+                <span style="font-size: 16px;" id="titel-msg" th:if="${apply != null and apply.examineStatus == 0}">第二步：待审核</span>
+                <span style="font-size: 16px;" id="titel-msg" th:if="${apply != null and apply.examineStatus != 0}">第三步：审核结果</span>
+            </div>
+            <div class="ibox-content" style="text-align: center">
+                <div th:style="${apply == null?'width: 500px;margin: 0px auto;display: block':'width: 500px;margin: 0px auto;display: none'}" id="oneform">
+                    <form class="form-horizontal m" id="form-apply-add">
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>申请人
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    需与工商营业执照法人名称相同</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <input id="applyName" placeholder="请输入申请人名称" name="applyName" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>邮箱
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    方便我们联系您</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <input id="applyEmail" placeholder="请输入邮箱" name="applyEmail" class="form-control" type="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>电话
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    方便我们联系您</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <input id="applyPhone" placeholder="请输入联系电话" name="applyPhone" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>企业名称
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    名称需与工商营业执照企业名称相同</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <input id="applyCompany" placeholder="请输入企业名称" name="applyCompany" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>行业
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    方便为您分配对应的功能模块</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <select id="applyIndustry" th:with="ins=${@industry.selectIsAll()}"  name="applyIndustry" class="form-control">
+                                    <option value="">请选择行业</option>
+                                    <option th:each="item:${ins}" th:value="${item.id}" th:utext="${item.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                <span style="color: red;font-size: 14px">*</span>工商营业执照扫描件
+                                <span style="color: red;font-size: 12px;margin-left: 10px">
+                                    （复印件需加盖公章）</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <input id="applyLicense" name="applyLicense" class="form-control" type="hidden">
+                                <div class="item">
+                                    <img class="addImg" onclick="clickImg(this);" src="/img/addImg.png"/>
+                                    <input name="url" id="file" type="file" class="upload_input" onchange="change(this)"/>
+                                    <div class="preBlock">
+                                        <img class="preview" id="preview" alt="" name="pic" width="190" height="190"/>
+                                    </div>
+                                    <img class="delete" onclick="deleteImg(this)" src="/img/delete.png"/>
+                                </div>
+                                <div style="clear: both"></div>
+                                <div style="color: red;text-align: left" id="file-msg">请上传工商营业执照扫描件</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12" style="text-align: left">
+                                备注
+                                <span style="color: #999;font-size: 12px;margin-left: 10px">
+                                    如果需要使用自己的服务器，请在备注中说明</span>
+                            </label>
+                            <div class="col-sm-12">
+                                <textarea id="remark" rows="5" name="remark" class="form-control" ></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                           <a class="btn btn-primary" onclick="submitHandler()">确认提交</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="twobox-form" th:style="${apply != null and apply.examineStatus == 0?'display: block':'display: none'}" id="twoform">
+                   <p style="font-size: 16px">您的申请资料会在1-3个工作日之内完成审核！</p>
+                   <p style="font-size: 16px">审核结果会发至您的邮箱，请注意查收！</p>
+                </div>
+                <div class="threebox-form" th:style="${apply != null and apply.examineStatus != 0?'display: block':'display: none'}" id="threeform">
+                    <div th:if="${apply != null and apply.examineStatus == 1}">
+                        <p style="font-size: 24px;color: red">很抱歉，审核未通过</p>
+                        <p style="font-size: 16px;" th:utext="${apply.examineRemark}"></p>
+                        <br/>
+                        <br/>
+                        <a class="btn btn-primary" onclick="resubmit()">重新提交</a>
+                    </div>
+                    <div th:if="${apply != null and apply.examineStatus == 2}">
+                        <p style="font-size: 24px;color: #39f">恭喜您，审核通过</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- bootstrap-table 表格插件 -->
+<script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/columns/bootstrap-table-fixed-columns.js}"></script>
+<!-- jquery-validate 表单验证插件 -->
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/jquery.validate.extend.js}"></script>
+<!-- jquery-validate 表单树插件 -->
+<script th:src="@{/ajax/libs/bootstrap-treetable/bootstrap-treetable.js}"></script>
+<!-- jquery-export 表格导出插件 -->
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/export/bootstrap-table-export.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/export/tableExport.js}"></script>
+<!-- 遮罩层 -->
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ajax/libs/iCheck/icheck.min.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/layui/layui.js}"></script>
+<script th:src="@{/ruoyi/js/common.js?v=3.2.0}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=3.2.0}"></script>
+<script th:inline="javascript"> var ctx = [[@{/}]]; </script>
+<script th:src="@{/ajax/libs/layui/layui.js}"></script>
+<script th:src="@{/js/serializeObject.js}"></script>
+<script type="text/javascript">
+    //点击
+    var clickImg = function (obj) {
+        $(obj).parent().find('.upload_input').click();
+    }
+    //删除
+    var deleteImg = function (obj) {
+        $(obj).parent().find('input').val('');
+        $(obj).parent().find('img.preview').attr("src", "");
+        //IE9以下
+        $(obj).parent().find('img.preview').css("filter", "");
+        $(obj).hide();
+        $(obj).parent().find('.addImg').show();
+        $("#applyLicense").val("");
+        $("#file-msg").show();
+    }
+
+    //选择图片
+    function change(file) {
+        var pic = $(file).parent().find(".preview");
+        var addImg = $(file).parent().find(".addImg");
+        var deleteImg = $(file).parent().find(".delete");
+        var ext = file.value.substring(file.value.lastIndexOf(".") + 1).toLowerCase();
+        if (ext != 'png' && ext != 'jpg' && ext != 'jpeg') {
+            if (ext != '') {
+                $.modal.alertWarning("图片的格式必须为png或者jpg或者jpeg格式！");
+            }
+            return;
+        }
+        //判断IE版本
+        var isIE = navigator.userAgent.match(/MSIE/) != null,
+            isIE6 = navigator.userAgent.match(/MSIE 6.0/) != null;
+        isIE10 = navigator.userAgent.match(/MSIE 10.0/) != null;
+        if (isIE && !isIE10) {
+            file.select();
+            var reallocalpath = document.selection.createRange().text;
+            // IE6浏览器设置img的src为本地路径可以直接显示图片
+            if (isIE6) {
+                pic.attr("src", reallocalpath);
+            } else {
+                // 非IE6版本的IE由于安全问题直接设置img的src无法显示本地图片，但是可以通过滤镜来实现
+                pic.css("filter", "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale',src=\"" + reallocalpath + "\")");
+                // 设置img的src为base64编码的透明图片 取消显示浏览器默认图片
+                pic.attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
+            }
+            addImg.hide();
+            deleteImg.show();
+        } else {
+            html5Reader(file, pic, addImg, deleteImg);
+        }
+        var formData = new FormData();
+        formData.append("file", $('#file')[0].files[0]);
+        $.ajax({
+            url: "/system/apply/license",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function (result) {
+                if (result.code == web_status.SUCCESS) {
+                    $("#applyLicense").val(result.data);
+                    $("#file-msg").hide();
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+            }
+        });
+    }
+
+    //H5渲染
+    function html5Reader(file, pic, addImg, deleteImg) {
+        var file = file.files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (e) {
+            pic.attr("src", this.result);
+        }
+        addImg.hide();
+        deleteImg.show();
+    }
+</script>
+<script type="text/javascript">
+    $("#file-msg").hide();
+    var prefix = ctx + "system/apply"
+    $("#form-apply-add").validate({
+        rules: {
+            applyName: {
+                required: true,
+            },
+            applyEmail: {
+                required: true,
+            },
+            applyPhone: {
+                required: true,
+                isPhone: true,
+            },
+            applyCompany: {
+                required: true,
+                minlength: 5,
+            },
+            applyIndustry: {
+                required: true,
+            },
+            applyLicense: {
+                required: true,
+            },
+        },
+        messages: {
+            applyName: {
+                required: "请输入申请人名称",
+            },
+            applyEmail: {
+                required: "请输入邮箱",
+            },
+            applyPhone: {
+                required: "请输入联系电话",
+                isPhone:"请输入有效的电话号码"
+            },
+            applyCompany: {
+                required: "请输入企业名称",
+                minlength: "企业名称长度必须大于5",
+            },
+            applyIndustry: {
+                required: "请选择行业",
+            },
+            applyLicense: {
+                required: "ddd",
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var f = $("#applyLicense").val();
+            if (f=="") {
+                $("#file-msg").show();
+            } else {
+                var config = {
+                    url: prefix + "/add",
+                    type: "post",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify($("#form-apply-add").serializeObject()),
+                    beforeSend: function () {
+                        $.modal.loading("正在处理中，请稍后...");
+                        $.modal.disable();
+                    },
+                    success: function (result) {
+                        if (result.code == web_status.SUCCESS) {
+                            $("#oneform").css("display","none");
+                            $("#twoform").css("display","block");
+                            $("#outside1abs").removeClass("outside1ab");
+                            $("#titel-msg").text("第二步：待审核")
+                        } else {
+                            $.modal.alertError(result.msg);
+                        }
+                        $.modal.closeLoading();
+                        $.modal.enable();
+                    }
+                };
+                $.ajax(config)
+            }
+        }
+    }
+
+    /**
+     * 重新提交
+     */
+    function resubmit() {
+        $("#threeform").css("display","none");
+        $("#oneform").css("display","block");
+        $("#outside1abs").removeClass().addClass("box-outside1 outside1ab")
+        $("#outside2as").removeClass().addClass("box-outside2 outside2a");
+        $("#titel-msg").text("第一步：提交资料")
+    }
+</script>
+</body>
+</html>

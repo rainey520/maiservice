@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-workExceptionList-edit" th:object="${workExceptionList}">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">工单号：</label>
+            <div class="col-sm-8">
+                <select name="workId" id="workId" class="form-control" disabled="disabled"
+                        th:with="workOrder=${@workOrder.selectWorkOrderAllBeIn(#httpServletRequest.getCookies())}">
+                    <option th:each="order : ${workOrder}" th:text="${order.workorderNumber}"
+                            th:selected="*{workId}==${order.Id}?true:false" th:value="${order.Id}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">异常类型：</label>
+            <div class="col-sm-8">
+                <!--<input id="exceType" name="exceType" th:field="*{exceType}" class="form-control" type="text">-->
+                <select id="exceType" name="exceType" class="form-control" disabled="disabled"
+                        th:with="exceTypeAll=${@exceType.findExceTypeAll(#httpServletRequest.getCookies())}">
+                    <option th:each="exceType : ${exceTypeAll}" th:text="${exceType.typeName}"
+                            th:selected="*{exceType}==${exceType.Id}?true:false"
+                            th:value="${exceType.Id}">
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注信息：</label>
+            <div class="col-sm-8">
+                <textarea id="remark" name="remark" th:field="*{remark}" rows="4" class="form-control" type="text" readonly="readonly"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">处理描述：</label>
+            <div class="col-sm-8">
+                <textarea id="handleContent" name="handleContent" th:field="*{handleContent}" rows="4"
+                          class="form-control" type="text"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">异常标记为：</label>
+            <div class="col-sm-8">
+                <div class="radio-box">
+                    <input type="radio" id="radio1" name="exceStatut" value="1" checked="checked">
+                    <label for="radio1">处理中</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="radio2" name="exceStatut" value="2">
+                    <label for="radio2">已解决</label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "production/workExceptionList";
+    $("#form-workExceptionList-edit").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.modal.confirm("确认执行该操作吗？", function () {
+                $.operate.save(prefix + "/handleWorkExcp", $('#form-workExceptionList-edit').serialize());
+            });
+        }
+    }
+</script>
+</body>
+</html>

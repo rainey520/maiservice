@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-devNotice-edit" th:object="${devNotice}">
+            <input id="id" name="id" th:field="*{id}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">通知内容：</label>
+				<div class="col-sm-8">
+					<textarea rows="4" id="noticeContent" name="noticeContent" th:field="*{noticeContent}"
+							  th:readonly="*{noticeStatus ==2 || noticeStatus ==3 ? true :false}" class="form-control" type="text"></textarea>
+				</div>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "device/devNotice";
+		$("#form-devNotice-edit").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			}
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-devNotice-edit').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

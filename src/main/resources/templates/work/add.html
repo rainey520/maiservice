@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/layui/css/modules/laydate/default/laydate.css}" rel="stylesheet"/>
+<body class="white-bg">
+<div class="ibox-content">
+    <div class="col-sm-12 select-table table-striped">
+        <form class="form-horizontal m" id="form-post-add">
+            <div class="form-group">
+                <!--左半边内容-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">模块姓：</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="">
+                                <option>模块1</option>
+                                <option>模块2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">责任人：</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="">
+                                <option>张三</option>
+                                <option>王五</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">工单号：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" class="form-control" placeholder="请输入工单号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">计划生产时间：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" id="startTime" class="form-control date-input"
+                                   placeholder="请输入计划生产时间">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">产品名称：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" class="form-control" placeholder="请输入产品名称">
+                        </div>
+                    </div>
+                </div>
+
+                <!--右半边内容-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">模块名：</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="">
+                                <option>端口1</option>
+                                <option>端口2</option>
+                                <option>端口3</option>
+                                <option>端口4</option>
+                                <option>端口5</option>
+                                <option>端口6</option>
+                                <option>端口7</option>
+                                <option>端口8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">产品编号：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" class="form-control" placeholder="请输入产品编号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">数量：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" class="form-control" placeholder="请输入产品数量">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">计划完成时间：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" id="endTime" class="form-control date-input"
+                                   placeholder="请输入计划完成时间">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">标准小时产量：</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="" class="form-control" placeholder="请输入标准小时产量">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-2">
+                    <button class="btn btn-primary" type="submit">确认</button>
+                    <button class="btn btn-white" type="submit">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{/ajax/libs/layui/lay/modules/layer.js}"></script>
+<script th:src="@{/ajax/libs/layui/lay/modules/laydate.js}"></script>
+<script type="text/javascript">
+    var prefix = ctx + "system/post";
+    $("#form-post-add").validate({
+        rules: {
+            postName: {
+                required: true,
+                remote: {
+                    url: ctx + "system/post/checkPostNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "postName": function () {
+                            return $.common.trim($("#postName").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            postCode: {
+                required: true,
+                remote: {
+                    url: ctx + "system/post/checkPostCodeUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "postCode": function () {
+                            return $.common.trim($("#postCode").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            postSort: {
+                required: true,
+                digits: true
+            },
+        },
+        messages: {
+            "postCode": {
+                remote: "岗位编码已经存在"
+            },
+            "postName": {
+                remote: "岗位名称已经存在"
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-post-add').serialize());
+        }
+    }
+</script>
+</body>
+</html>

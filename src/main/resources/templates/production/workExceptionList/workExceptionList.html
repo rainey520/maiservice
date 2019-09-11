@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            工单：<input type="text" name="devWorkOrder.workorderNumber"/>
+                        </li>
+                        <li>
+                            异常类型：
+                            <select id="exceType" name="exceType" style="width: 150px"
+                                    th:with="exceTypeAll=${@exceType.findExceTypeAll(#httpServletRequest.getCookies())}">
+                                <option value="">全部</option>
+                                <option th:each="exceType : ${exceTypeAll}" th:text="${exceType.typeName}"
+                                        th:value="${exceType.Id}">
+                                </option>
+                            </select>
+                        </li>
+                        <li>
+                            异常状态：
+                            <select name="exceStatut" style="width: 150px">
+                                <option value="">全部</option>
+                                <option value="0">未处理</option>
+                                <option value="1">处理中</option>
+                                <option value="2">已解决</option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()" shiro:hasPermission="production:workExceptionList:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="edit()"
+               shiro:hasPermission="production:workExceptionList:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="production:workExceptionList:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="production:workExceptionList:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('production:workExceptionList:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('production:workExceptionList:remove')}]];
+    var prefix = ctx + "production/workExceptionList";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "各个工单异常情况记录",
+            search: false,
+            showExport: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '',
+                    visible: false
+                },
+                {
+                    field: 'devWorkOrder.workorderNumber',
+                    title: '工单号'
+                },
+                {
+                    field: 'workExceptionType.typeName',
+                    title: '异常类型'
+                },
+                {
+                    field: 'remark',
+                    title: '备注信息',
+                    sortable: true
+                },
+                {
+                    field: 'handleContent',
+                    title: '处理信息',
+                    sortable: true
+                },
+                {
+                    field: 'exceStatut',
+                    title: '异常状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.exceStatut == 0) {
+                            return '<span class="badge badge-warning">待处理</span>';
+                        } else if (row.exceStatut == 1) {
+                            return '<span class="badge badge-primary">处理中</span>';
+                        } else if (row.exceStatut == 2) {
+                            return '<span class="badge badge-success">已解决</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                },
+                {
+                    field: 'handleUser',
+                    title: '处理者',
+                    sortable: true
+                },
+                {
+                    field: 'handleTime',
+                    title: '处理时间',
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        if (row.exceStatut == 2) { // 异常工单已经处理完成，不能进行编辑和操作
+                            actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" disabled="true"><i></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" disabled="true"><i></i>删除</a>');
+                        } else {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><i></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i></i>删除</a>');
+                        }
+                        return actions.join('');
+                    }
+                },
+                {
+                    title: '异常处理',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.exceStatut == 0) {
+                            return '<a class="btn btn-warning btn-xs '+ editFlag +'" href="#" onclick="handleWorkExcp(\'' + row.id + '\')"><i></i>待处理</a> ';
+                        } else if (row.exceStatut == 1) {
+                            return '<a class="btn btn-primary btn-xs '+ editFlag +'" href="#" onclick="finishWorkExcp(\'' + row.id + '\')"><i></i>处理中</a> ';
+                        } else if (row.exceStatut == 2) {
+                            return '<a class="btn btn-success btn-xs" href="javascript:void(0)" disabled="true"><i></i>已解决</a> ';
+                        }
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    /**
+     * 添加
+     */
+    function add() {
+        $.modal.open("工单异常记录", prefix + "/add", 800, 400);
+    }
+
+    /**
+     * 修改
+     * @param id
+     */
+    function edit(id) {
+        var url = prefix + "/edit/{id}";
+        if ($.common.isNotEmpty(id)) {
+            url = $.table._option.updateUrl.replace("{id}", id);
+        } else {
+            var id = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+            if (id.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            url = $.table._option.updateUrl.replace("{id}", id);
+        }
+        $.modal.open("修改异常记录", url, 800, 520);
+    }
+
+    /**
+     * 跳转处理异常描述
+     * @param id
+     */
+    function handleWorkExcp(id) {
+        var url = prefix + "/handleExcp/" + id;
+        $.modal.open("异常处理描述", url, 800, 520);
+    }
+
+    /**
+     * 异常处理完成操作
+     * @param id
+     */
+    function finishWorkExcp(id) {
+        $.modal.confirm("确认异常已经解决吗？", function () {
+            $.ajax({
+                type: 'POST',
+                url: prefix + '/finishWorkExcp',
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                async: false,  //同步请求，
+                success: function (result) {
+                    if (result.code == 0) {
+                        $.modal.alertWarning("异常已经解决");
+                        $.table.refresh();
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

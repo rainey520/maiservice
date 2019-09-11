@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aa5c7334-a245-4e7e-862d-db8107a47b37">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="orderDataTable" uuid="de3face0-111a-4fa8-99cd-59ab78ffb729">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="param5" class="java.lang.String"/>
+		<field name="param4" class="java.lang.String"/>
+		<field name="param3" class="java.lang.String"/>
+		<field name="param2" class="java.lang.String"/>
+		<field name="param1" class="java.lang.String"/>
+		<field name="work1" class="java.lang.String"/>
+		<field name="work2" class="java.lang.String"/>
+		<field name="work3" class="java.lang.String"/>
+		<field name="workingHour" class="java.lang.Float"/>
+		<field name="directPassRate" class="java.lang.Float"/>
+		<field name="reachRate" class="java.lang.Float"/>
+		<field name="scrapNum" class="java.lang.Integer"/>
+		<field name="actualWarehouseNum" class="java.lang.Integer"/>
+		<field name="productNumber" class="java.lang.Integer"/>
+		<field name="productName" class="java.lang.String"/>
+		<field name="productCode" class="java.lang.String"/>
+		<field name="workorderNumber" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="exceptionData" uuid="ad09561e-adec-40ff-8513-ee93ab82dbfc">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<subDataset name="Dataset1" uuid="bb96e5bf-71e9-478a-97cd-27978bba5752">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="createTime" class="java.util.Date"/>
+		<field name="workorderNumber" class="java.lang.String"/>
+		<field name="typeName" class="java.lang.String"/>
+		<field name="remark" class="java.lang.String"/>
+		<field name="exce" class="java.lang.String"/>
+		<field name="handleUser" class="java.lang.String"/>
+		<field name="handleContent" class="java.lang.String"/>
+		<field name="handleTime" class="java.util.Date"/>
+	</subDataset>
+	<parameter name="company_name" class="java.lang.String"/>
+	<parameter name="line" class="java.lang.String"/>
+	<parameter name="startTime" class="java.lang.String"/>
+	<parameter name="endTime" class="java.lang.String"/>
+	<parameter name="param5" class="java.lang.String"/>
+	<parameter name="orderDataTable" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="totalDirectPassRate" class="java.lang.Float"/>
+	<parameter name="totalWork3" class="java.lang.Float"/>
+	<parameter name="totalWork2" class="java.lang.Float"/>
+	<parameter name="totalWork1" class="java.lang.Float"/>
+	<parameter name="totalReachRate" class="java.lang.Float"/>
+	<parameter name="totalHour" class="java.lang.Float"/>
+	<parameter name="totalStandardHour" class="java.lang.Float"/>
+	<parameter name="totalScrapNum" class="java.lang.Integer"/>
+	<parameter name="totalActualNum" class="java.lang.Integer"/>
+	<parameter name="exceptionData" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="63" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="17" width="550" height="44" uuid="f54205b4-b941-434d-9335-dd2cf84b28c1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="华文宋体" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{company_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="24">
+			<staticText>
+				<reportElement x="230" y="0" width="100" height="20" uuid="1a94d19c-5ddf-4ffe-b454-8235b0497ae7"/>
+				<textElement textAlignment="Center">
+					<font fontName="华文宋体" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[生产报表]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="2" width="80" height="20" uuid="d29dd21c-daf9-460a-b687-e28abca93e70"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[数据来源：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="56" y="2" width="234" height="20" uuid="dcee525c-b42d-4ce7-9f68-f6ea3f0df250"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="华文宋体" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{line}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="378" y="1" width="80" height="20" uuid="4bd99730-14e6-4d19-a286-732b4e698434"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[报表时间：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="452" y="1" width="54" height="20" uuid="db6a995d-527a-4c7e-aaeb-5b65e5afb78e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="503" y="2" width="16" height="20" uuid="af10965b-66e5-4394-aae9-642bb44e363d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" isBold="true"/>
+				</textElement>
+				<text><![CDATA[至]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="516" y="1" width="54" height="20" uuid="6d0981fd-c602-454b-bccc-d02915d98e6c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{endTime}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="472">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<line>
+				<reportElement x="-11" y="0" width="581" height="1" uuid="7d8b7da6-f9ee-40f3-8519-4ee1834253fb"/>
+			</line>
+			<line>
+				<reportElement x="422" y="17" width="148" height="1" uuid="94879789-6d28-4fde-ab24-97c0198e9653"/>
+			</line>
+			<line>
+				<reportElement x="570" y="0" width="1" height="52" uuid="1f0a34f1-e440-4ce7-a5fa-89efbf4c75e7"/>
+			</line>
+			<line>
+				<reportElement x="-11" y="0" width="1" height="52" uuid="fb3fadd1-f120-4bf8-a58b-b55f49552649"/>
+			</line>
+			<line>
+				<reportElement x="-11" y="31" width="581" height="1" uuid="9b3e78e4-8efd-4a11-9a64-62ae6700a3de"/>
+			</line>
+			<line>
+				<reportElement x="-11" y="51" width="581" height="1" uuid="da24d949-67c7-4084-988a-e01df0a15985"/>
+			</line>
+			<staticText>
+				<reportElement x="521" y="17" width="49" height="14" uuid="c0a1966e-1cd1-44b4-a466-af7705af147b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[加班X3.0]]></text>
+			</staticText>
+			<line>
+				<reportElement x="520" y="17" width="1" height="35" uuid="d77a5125-712c-49b0-a373-42a79ceec435"/>
+			</line>
+			<staticText>
+				<reportElement x="471" y="17" width="49" height="14" uuid="386b9bfd-8340-4220-b9af-e675f3201fae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[加班X2.0]]></text>
+			</staticText>
+			<line>
+				<reportElement x="471" y="17" width="1" height="35" uuid="944f8050-1e8c-485e-87ee-e576aebc5e36"/>
+			</line>
+			<staticText>
+				<reportElement x="422" y="17" width="49" height="14" uuid="1ca15201-fae0-486f-9c56-1ebe79071bfe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[加班X1.5]]></text>
+			</staticText>
+			<line>
+				<reportElement x="422" y="1" width="1" height="51" uuid="b8c0e239-3812-44c8-8e81-19326cc5f0a4"/>
+			</line>
+			<staticText>
+				<reportElement x="423" y="1" width="147" height="17" uuid="bdf84bb0-8d89-4e7d-a89c-4ee876edf306"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[实际工时详情（小时）]]></text>
+			</staticText>
+			<line>
+				<reportElement x="350" y="1" width="1" height="51" uuid="23d5f5b9-c4c6-4f77-a01a-8435ff2e7545"/>
+			</line>
+			<staticText>
+				<reportElement x="351" y="1" width="72" height="30" uuid="50b57e2e-3f51-4d39-aa01-f96582735aaa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[平均直通率(%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="1" width="72" height="30" uuid="037dfbee-a90f-437a-b4d8-d22ede270548"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[平均达成率(%)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="277" y="1" width="1" height="51" uuid="66f068e0-f1ae-481b-a5cc-ca1977b9cc83"/>
+			</line>
+			<staticText>
+				<reportElement x="205" y="1" width="72" height="30" uuid="ac49f28d-cf81-41ba-bc4d-ee809aa53ce2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[实际总工时]]></text>
+			</staticText>
+			<line>
+				<reportElement x="205" y="1" width="1" height="51" uuid="d72bc11a-9ee8-43fe-abbe-64e43e9f5331"/>
+			</line>
+			<staticText>
+				<reportElement x="133" y="1" width="72" height="30" uuid="6c3c28ee-c80f-45fa-9883-04f113f5218a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[标准总工时]]></text>
+			</staticText>
+			<line>
+				<reportElement x="132" y="1" width="1" height="51" uuid="bb9015db-0298-4039-9881-4cf3b29443d1"/>
+			</line>
+			<staticText>
+				<reportElement x="60" y="1" width="72" height="30" uuid="15052089-b376-4dd1-be92-d6572135935f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[总报废数量]]></text>
+			</staticText>
+			<line>
+				<reportElement x="58" y="1" width="1" height="51" uuid="efc78e9b-ac83-4c83-8da1-297f339852a6"/>
+			</line>
+			<staticText>
+				<reportElement x="-11" y="1" width="72" height="30" uuid="df03ddfc-b316-45dd-be94-ff9e8ad5b930"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[总入库数量]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="-10" y="76" width="580" height="154" uuid="0afa27c3-cf4b-4bcd-ab41-e6cb77a0a436">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="orderDataTable" uuid="177d0503-9e72-40f7-9cd1-4068a5df9f57">
+						<dataSourceExpression><![CDATA[$P{orderDataTable}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="580" uuid="e213254c-0f30-46e9-817e-23b4e052f23a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [17]"/>
+						<jr:tableHeader style="Table_TH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="580" height="30" uuid="19789598-6ae5-4079-b175-9e8703e0eea6"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="华文宋体" isBold="true"/>
+								</textElement>
+								<text><![CDATA[工单详情]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:column width="70" uuid="a58ee9a1-801a-47df-9f83-7e54c7e11cd8">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="30" uuid="2041125e-2a70-4a9c-b26e-116906ec31ed"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[工单号]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="70" height="30" uuid="8e509dcd-b5ae-45c2-9f08-545e3ac5988d"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{workorderNumber}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="80" uuid="4c38b900-7c9d-4524-bafa-c3af8c2b2c76">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="80" height="30" uuid="464c2273-2a7a-46f7-9978-c6b7dee82e3b"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[产品编码]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="80" height="30" uuid="08fc91f4-1bfd-4174-9d10-813a8140aa22"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{productCode}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="50" uuid="71e14322-76e6-4fa8-bcc1-7065ac7327f0">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="50" height="30" uuid="0e844d45-5cd0-4abd-bb61-333faaa9fd65"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[产品名称]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="50" height="30" uuid="1ab950cd-91f4-426a-abce-544c1590c87e"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{productName}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="20" uuid="0cddef92-4fb3-4b09-a2d6-7f37e5d51430">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="30" uuid="f34ac8a7-73fa-4425-8f14-dfc5011eeb25"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[工单
+数量]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="20" height="30" uuid="582105fd-03f1-4971-8a89-baa9b61d7cdc"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{productNumber}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="20" uuid="2fc91150-7d00-4498-b5be-bb642fbc29dc">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="30" uuid="dda514bb-64e2-405e-bfc8-a2e13bdc9363"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[入库
+数量]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="20" height="30" uuid="fba32ae0-f588-4a8a-8f19-e1aa63ec3af1"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{actualWarehouseNum}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="20" uuid="ecf4e2ac-6eba-4270-9e1c-8c819ca8d671">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="30" uuid="ec845a25-a254-4867-a028-0d560b124cee"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[报废
+数量]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="20" height="30" uuid="bb83d63b-166f-4b18-9e81-deded974217f"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{scrapNum}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="84909b58-08be-43a9-a463-61c0a4a5f823">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="33c97d34-f4af-4526-b43b-4fba94cdb7da"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[达成
+率(%)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="b883d49b-68c9-4efe-896f-c371e9799444"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{reachRate}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="a19ac37c-0665-4769-a59f-be7d6a059f4e">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="baab7187-5d44-41c4-83b5-67c7e593b819"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[直通
+率(%)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="c0fcd395-8083-4b97-b6f7-d94483d2b7d5"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{directPassRate}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="20" uuid="d65b1fbd-2b09-4e72-a65e-2fd824d2b120">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="30" uuid="5e9dd06c-da50-4445-b7aa-8ac4e4759a9f"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[正常
+工时]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="20" height="30" uuid="ead8973b-0f91-40be-96ef-72237bbd1a48"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{workingHour}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="c67de551-839c-4d65-89c3-c2dad264afca">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="7a4acc38-43ab-4f85-9ec8-450058935e34"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[加班X1.5]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="4800db5e-0486-42df-933c-ca011dfc91ff"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{work1}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="92494d9d-1c9a-4d92-883d-36b784269262">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="78d3b75c-5667-4620-96d3-c0094e5b3c23"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[加班X2.0]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="e0f1e6c0-ab74-4e74-b052-2936c9149288"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{work2}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="bc5e004c-f10c-4352-ac4f-f78f26c28c69">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="173c6b18-fbfd-44c6-8469-eef55723446b"/>
+									<textElement textAlignment="Center">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[加班X3.0]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField>
+									<reportElement x="0" y="0" width="30" height="30" uuid="99c6e210-da93-4389-b74d-42bf2a1a434c"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{work3}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="b53980a6-cb3d-430f-99f2-c1cfc6b3ca57">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column13"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="a3905d2f-b741-4068-ad90-50a657ca6be1"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[自定义]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="1c46222c-c5fd-4a22-b0b4-55ea411a88cb"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{param1}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="67ec86ca-48a1-4e48-8451-200b24c439b4">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column14"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="9765af9a-62d4-4917-9767-72c2183c3632"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[自定义]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="751f6cad-dac0-4b13-b53d-4d2ada775477"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{param2}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="b798d3ef-070c-441d-8450-6abb0ce283cc">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column15"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="5bbf3771-0f9a-4093-a11d-669b3a566751"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[自定义]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="4a976979-54dd-4d22-a342-1a87c7fd5793"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{param3}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="cabccb01-4202-456d-9e11-517d550978e5">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column16"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="501fb691-ec96-4ab1-8413-c44e9516a98f"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[自定义]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="a73d0d73-a7ac-404b-9611-a1ab79e57b16"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{param4}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="5e46d91c-f1b4-45cb-8d58-7ea142f24b5f">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column17"/>
+							<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="459b304f-43d5-4e51-8dc1-c66b64dcee1c"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[自定义]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="959c94d6-29e8-4345-83ae-74cea8747308"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{param5}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="350" y="31" width="72" height="18" uuid="12ccea44-26c3-4ea4-abc6-cee68c6f327e"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalDirectPassRate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="520" y="31" width="50" height="18" uuid="5a3d8f78-3c6f-4fa7-899a-fcc793d04eca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalWork3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="470" y="31" width="49" height="20" uuid="77b5d849-ec30-4e2a-a540-8da924e1b722"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalWork2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="423" y="30" width="49" height="22" uuid="6822c711-6afc-49e5-912c-b9de514934c4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalWork1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="278" y="32" width="72" height="20" uuid="a72c4073-ef5a-4c90-a957-fc4bb5da9b28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalReachRate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="205" y="30" width="73" height="19" uuid="ef72d4a0-2fb7-4a77-8489-ca17bea4d0d0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalHour}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="133" y="30" width="72" height="22" uuid="5b410ffe-596b-4920-adab-4c800e0b1868"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalStandardHour}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="58" y="32" width="75" height="20" uuid="b0123bc4-eb3e-498b-ac5b-de5e9f09a81e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalScrapNum}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="-10" y="32" width="66" height="17" uuid="194e108a-ca8a-4802-b3b7-996b364281a8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="华文宋体"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalActualNum}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="-10" y="250" width="580" height="200" uuid="9bc77fae-4f4d-42ec-a5e6-5ff81dd1f220">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset1" uuid="55bf609c-f980-490b-a516-04a6f2c4b541">
+						<dataSourceExpression><![CDATA[$P{exceptionData} ]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="580" uuid="66fe0b30-c6c7-4db7-ad43-45102e4283ae">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [8]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="580" height="30" uuid="567e532c-22d6-4799-b75f-8e3e343dd452"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="华文宋体" isBold="true"/>
+								</textElement>
+								<text><![CDATA[异常事件]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:column width="70" uuid="131033cb-0f0f-490f-b3ea-d084cb324100">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="30" uuid="6646781d-997f-46c5-b2e9-1fafd5ef0aa0"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[工单号]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="70" height="30" uuid="f90a69c1-2560-4bbc-8ce1-5b4543f9e1b0"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{workorderNumber}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="8bfa9b87-e8bb-4a43-8894-0fb10bdf4cde">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="30" uuid="21ffc116-7f7b-42ac-8be7-c308da2e9dc7"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[异常分类]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="30" uuid="508e7849-4d56-4099-8d74-8b09d7b493a6"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{typeName}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="7e523aea-dd16-481b-a816-e5804b123b0e">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="30" uuid="b8fee946-3e97-48d4-9b37-0b92b6870660"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[发生时间]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="70" height="30" uuid="9e672e82-a896-4574-a195-183d7e60e5b4"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{createTime}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="120" uuid="5b8516c1-9ffe-4dbc-a50c-63da4578b14e">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="120" height="30" uuid="9ae4ad25-7bfb-4058-bba1-a30116392ddc"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[异常描述]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="120" height="30" uuid="8fed515b-51d0-4add-a7ee-0523bf8e9fb9"/>
+									<textElement textAlignment="Left">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="30" uuid="46e1f549-a012-4169-b1e4-fb9dc3bed2ff">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="30" uuid="c525e0c3-3f71-4a93-bcc3-ae93a5538fea"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[处理
+状态]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="30" height="30" uuid="500b24b3-5ece-4e02-8664-484cbc2f049f"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{exce}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="40" uuid="e4288bbe-2212-4695-9416-1970753e9054">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="40" height="30" uuid="13918f7e-3329-46d0-b146-f828cee85757"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[责任人]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="40" height="30" uuid="82c197c3-2af2-48d2-b735-4c8f8adcb283"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{handleUser}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="110" uuid="201ff940-4a5b-40c8-91e8-702144f028aa">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="110" height="30" uuid="db9e179b-3d35-45fb-b11f-d2e169f6c474"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[解决方案]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="110" height="30" uuid="477b814d-70ff-462f-8d50-7c1b682aa35c"/>
+									<textElement>
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{handleContent}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="c7f10c1d-bb4d-47f1-97cc-2d69078c80b4">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="30" uuid="218a4533-1fed-4c47-8b6e-8097eb48fbe6"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[处理时间]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="30">
+								<textField isStretchWithOverflow="true">
+									<reportElement x="0" y="0" width="70" height="30" uuid="08367013-b9fc-42c3-8228-1117d1f37455"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="华文宋体" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{handleTime}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

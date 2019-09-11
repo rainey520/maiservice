@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-workExceptionList-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">选择产线：</label>
+            <div class="col-sm-8">
+                <select name="lineId" id="lineId" class="form-control" onchange="selectWorkOrderBeInByLineId(this)"
+                        th:with="allLine=${@productionLine.selectProductionLineAll(#httpServletRequest.getCookies())}">
+                    <option value="">请选择</option>
+                    <option th:each="line : ${allLine}" th:text="${line.lineName}"
+                            th:value="${line.id}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">工单号：</label>
+            <div class="col-sm-8">
+                <input id="workId" name="workId" class="form-control" type="hidden">
+                <input id="workNumber" name="workNumber" class="form-control" type="text" readonly="readonly">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">异常类型：</label>
+            <div class="col-sm-8">
+                <select id="exceType" name="exceType" class="form-control"
+                        th:with="exceTypeAll=${@exceType.findExceTypeAll(#httpServletRequest.getCookies())}">
+                    <option value="">请选择</option>
+                    <option th:each="exceType : ${exceTypeAll}" th:text="${exceType.typeName}"
+                            th:value="${exceType.Id}">
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注信息：</label>
+            <div class="col-sm-8">
+                <textarea id="remark" name="remark" rows="4" class="form-control" type="text"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "production/workExceptionList"
+    $("#form-workExceptionList-add").validate({
+        rules: {
+            workNumber: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-workExceptionList-add').serialize());
+        }
+    }
+
+    /**
+     * 选择产线查询对应产线正在生产的工单
+     * @param value
+     */
+    function selectWorkOrderBeInByLineId(value) {
+        $("#workId").val('');
+        $("#workNumber").val('');
+        $.ajax({
+            type: 'POST',
+            url: '/device/devWorkOrder/selectWorkOrderBeInByLineId',
+            dataType: 'json',
+            data: {
+                lineId: value.value,
+            },
+            async: false,  //同步请求，
+            success: function (result) {
+                if (result.code == web_status.SUCCESS && result.data != null) {
+                    $("#workId").val(result.data.id);
+                    $("#workNumber").val(result.data.workorderNumber);
+                }
+            }
+        });
+
+    }
+
+</script>
+</body>
+</html>

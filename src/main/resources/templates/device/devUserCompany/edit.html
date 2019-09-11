@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-devUserCompany-edit" th:object="${devUserCompany}">
+            <input id="companyId" name="companyId" th:field="*{companyId}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">用户主键ID：</label>
+				<div class="col-sm-8">
+					<input id="userId" name="userId" th:field="*{userId}" class="form-control" type="text">
+				</div>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "device/devUserCompany";
+		$("#form-devUserCompany-edit").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			}
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-devUserCompany-edit').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

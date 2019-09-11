@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								申请人：<input type="text" name="applyName" style="width: 160px"/>
+							</li>
+
+							<li>
+								邮箱：<input type="text" name="applyEmail" style="width: 200px"/>
+							</li>
+
+							<li>
+								电话：<input type="text" name="applyPhone" style="width: 140px"/>
+							</li>
+
+							<li>
+								企业名称：<input type="text" name="applyCompany"/>
+							</li>
+							<li>
+								所属行业：<select name="applyIndustry"  th:with="ins=${@industry.selectIsAll()}" style="width: 200px">
+								<option value="-1">所有</option>
+								<option th:each="item:${ins}" th:value="${item.id}" th:utext="${item.name}"></option>
+							</select>
+							</li>
+
+							<li>
+								审核状态：
+								<select name="examineStatus" style="width: 100px">
+									<option value="-1">所有</option>
+									<option value="0">待审核</option>
+									<option value="1">未通过</option>
+									<option value="2">已通过</option>
+								</select>
+							</li>
+							<li>
+								审核人：
+								<select name="examinePeople" style="width: 100px" th:with="user=${@user.selectTagSysUser()}">
+									<option value="-1">所有</option>
+									<option th:each="item:${user}" th:value="${item.userId}" th:utext="${item.userName}"></option>
+								</select>
+							</li>
+							<li>
+								分配服务器：
+								<select name="serStatus" style="width: 100px">
+									<option value="-1">所有</option>
+									<option value="0">否</option>
+									<option value="1">是</option>
+								</select>
+							</li>
+
+							<li class="select-time">
+								<label>申请时间：</label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
+							</li>
+							<li class="select-time">
+								<label>审核时间： </label>
+								<input type="text" class="time-input" id="applyTime" placeholder="开始时间" name="applyTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="examineTime1" placeholder="结束时间" name="examineTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var viewLicenseFlag = [[${@permission.hasPermi('system:apply:viewLicense')}]];//执照预览
+        var editFlag = [[${@permission.hasPermi('system:apply:edit')}]];//审核
+        var serverFlag = [[${@permission.hasPermi('system:apply:server')}]];//服务器分发
+        var detailViewFlag = [[${@permission.hasPermi('system:apply:detailView')}]];//详情预览
+        var prefix = ctx + "system/apply";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+				exportUrl: prefix + "/export",
+                modalName: "资质认证",
+				sortName:'applyTime',
+				sortOrder:'desc',
+				search: false,
+		        showExport: false,
+				showSearch:false,
+				showRefresh:false,
+				showColumns:false,
+				showToggle:false,
+				showExport:false,
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'id', 
+					title : '',
+					visible: false
+				},
+				{
+					field : 'applyName', 
+					title : '申请人',
+					sortable: true,
+					formatter:function (value, row, index) {
+						if(detailViewFlag ==''){
+							return "<a class='btn btn-primary btn-xs' onclick='detailView(" + row.id + ")'><i class='fa fa-eye'></i>"+value+"</a>"
+						}else{
+							return value;
+						}
+					}
+				},
+				{
+					field : 'applyEmail', 
+					title : '邮箱',
+					sortable: true
+				},
+				{
+					field : 'applyPhone', 
+					title : '电话',
+					sortable: true
+				},
+				{
+					field : 'applyCompany',
+					title : '企业名称',
+					sortable: true,
+					width:180,
+					formatter: function(value, row, index) {
+						if(value){
+							return $.table.tooltip(value);
+						}
+						return"-";
+					}
+				},
+				{
+					field : 'industryName',
+					title : '行业',
+					sortable: true
+				},
+				{
+					field : 'applyTime', 
+					title : '申请时间',
+					sortable: true
+				},
+					{
+						field : 'remark',
+						title : '备注',
+						sortable: true,
+						width:240,
+						formatter: function(value, row, index) {
+							if(value){
+								return $.table.tooltip(value);
+							}
+							return"-";
+						}
+					},
+				{
+					field : 'examineStatus', 
+					title : '审核状态',
+					sortable: true,
+					formatter:function (value, row, index) {
+						if(value == 0){
+							return "待审核"
+						}else if(value == 1){
+							return "<span style='color: red'>未通过</span>"
+						}else if(value == 2){
+							return "<span style='color: green'>已通过</span>"
+						}
+					}
+				},
+				{
+					field : 'examinePeopleName',
+					title : '审核人',
+					sortable: true
+				},
+				{
+					field : 'examineTime', 
+					title : '审核时间',
+					sortable: true
+				},
+				// {
+				// 	field : 'examineRemark',
+				// 	title : '审核备注',
+				// 	sortable: true,
+				// 	width:240,
+				// 	formatter: function(value, row, index) {
+				// 		if(value){
+				// 			return $.table.tooltip(value);
+				// 		}
+				// 		return "-";
+				// 	}
+				// },
+				{
+					field : 'serStatus',
+					title : '是否分配服务器 0、否 1、是',
+					visible: false
+				},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	var actions = [];
+		            	actions.push('<a class="btn btn-primary btn-xs ' + viewLicenseFlag + '" href="#" onclick="viewLicense(\'' + row.applyLicense + '\')"><i class="fa fa-eye"></i>预览执照</a> ');
+		            	if(row.examineStatus == 0){
+							actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="examineInfo(\'' + row.id + '\')"><i class="fa fa-edit"></i>审核</a> ');
+						}else{
+							actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" disabled="true"><i class="fa fa-edit"></i>审核</a> ');
+						}
+		            	if(row.examineStatus == 2 && row.serStatus == 0){
+							actions.push('<a class="btn btn-success btn-xs ' + serverFlag + '" href="#" onclick="configService(\'' + row.id + '\')"><i class="fa fa-edit"></i>分发服务器</a> ');
+						}else{
+							actions.push('<a class="btn btn-success btn-xs ' + serverFlag + '" href="#" disabled="true"><i class="fa fa-edit"></i>分发服务器</a> ');
+						}
+						return actions.join('');
+		            }
+		        }]
+            };
+            $.table.init(options);
+        });
+
+		/**
+		 * 预览执照
+		 * @param path
+		 */
+		function viewLicense(path) {
+			window.open(path);
+		}
+
+		/**
+		 * 审核申请信息
+		 * @param id 编号
+		 */
+		function examineInfo(id) {
+			$.modal.open("审核资质认证",prefix+"/edit/"+id,800,400)
+		}
+
+		/**
+		 * 详情预览
+		 * @param id
+		 */
+		function detailView(id) {
+			$.modal.open("资质认证详情",prefix+"/details/"+id,800,600)
+		}
+
+		/**
+		 * 分发服务器
+		 * @param id
+		 */
+		function configService(id) {
+			$.modal.open("分发服务器",prefix+"/configService/"+id,800,400)
+		}
+    </script>
+</body>
+</html>

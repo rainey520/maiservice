@@ -1,0 +1,114 @@
+#2019-05-22
+ALTER TABLE `erpstock`.`tab_materiel_into_stock_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `price`;
+ALTER TABLE `erpstock`.`tab_materiel_out_stock_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `price`;
+ALTER TABLE `erpstock`.`tab_product_out_stock_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `price`;
+ALTER TABLE `erpstock`.`tab_product_into_stock_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `price`;
+ALTER TABLE `erpstock`.`tab_materiel_feed_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `out_number`;
+ALTER TABLE `erpstock`.`tab_line_into_stock_details`
+ADD COLUMN `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、作废)' AFTER `into_type`;
+#2019-5-27
+CREATE TABLE `erpstock`.`tab_stock_handle` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '库存内部处理主键',
+  `company_id` INT(11) NULL COMMENT '公司主键id',
+  `handle_code` VARCHAR(60) NULL COMMENT '库存处理编号',
+  `handle_type` CHAR(1) NULL COMMENT '处理类型(0、成品，1、物料，2、半成品)',
+  `create_id` INT(11) NULL COMMENT '创建者id',
+  `create_name` VARCHAR(45) NULL COMMENT '创建者姓名',
+  `create_time` DATETIME NULL COMMENT '创建时间',
+  `actual_time` DATETIME NULL COMMENT '实际处理时间',
+  `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、已作废)',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COMMENT = '库存内部处理主表';
+
+ALTER TABLE `erpstock`.`tab_stock_handle`
+ADD COLUMN `remark` TEXT NULL COMMENT '备注信息' AFTER `del_flag`;
+
+CREATE TABLE `erpstock`.`tab_stock_handle_details` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `company_id` INT(11) NULL COMMENT '公司主键id',
+  `handle_id` INT(11) NULL COMMENT '内部调整主键id',
+  `handle_code` VARCHAR(45) NULL COMMENT '处理单号',
+  `handle_type` CHAR(1) NULL COMMENT '处理类型(0、成品，1、物料，2、半成品)',
+  `create_id` INT(11) NULL COMMENT '创建者',
+  `create_name` VARCHAR(45) NULL COMMENT '创建者姓名',
+  `create_time` DATETIME NULL COMMENT '创建时间',
+  `actual_time` DATETIME NULL COMMENT '实际处理时间',
+  `attr_id` INT(11) NULL COMMENT '产品/物料/半成品id',
+  `attr_code` VARCHAR(45) NULL COMMENT '产品/物料/半成品编码',
+  `attr_model` VARCHAR(45) NULL COMMENT '产品/物料/半成品型号\n',
+  `attr_name` VARCHAR(45) NULL COMMENT '产品/物料/半成品名称',
+  `handle_status` CHAR(1) NULL COMMENT '处理状态(0、不良=>良品 1、不良=>报废 2、良品=>不良 3、良品=>报废 4、报废品清库)',
+  `handle_number` INT(11) NULL DEFAULT 0 COMMENT '处理数量',
+  `del_flag` CHAR(1) NULL DEFAULT 0 COMMENT '作废状态(0、默认值未作废，1、已作废)',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COMMENT = '内部调整明细表';
+
+
+
+# 2019-05-29  未执行
+INSERT INTO `devicemanage2`.`dev_page_layout` (`layout_type`, `layout_name`, `layout_status`, `create_date`, `layout_num`) VALUES ('4', '图纸看板', '1', now(), '0');
+
+#2019-05-30
+ALTER TABLE `devicemanage2`.`dev_product_list`
+ADD INDEX `code_company` (`company_id` ASC, `product_code` ASC) VISIBLE;
+;
+
+
+#2019-06-03
+ALTER TABLE `devicemanage2`.`dev_work_order`
+ADD COLUMN `sign` INT NULL DEFAULT 1 AFTER `ecn_text`;
+
+#2019-06-10 未执行
+ALTER TABLE `devicemanage`.`dev_company`
+ADD COLUMN `industry` INT(11) NULL COMMENT '公司所属行业' AFTER `com_picture`;
+
+
+
+#2019-06-11
+ALTER TABLE `devicemanage`.`dev_company`
+ADD COLUMN `total_iso` VARCHAR(45) NULL AFTER `industry`;
+
+
+ALTER TABLE `mainservers`.`sys_user`
+ADD COLUMN `r_sign` INT NULL DEFAULT 0 AFTER `user_department`;
+
+
+2019-07-10
+#======================用户服务器修改点=========================
+ALTER TABLE `devicemanage`.`sys_user`
+ADD COLUMN `dev_type` VARCHAR(45) NULL COMMENT '设备类型' AFTER `user_department`,
+ADD COLUMN `dev_code` VARCHAR(65) NULL COMMENT '设备号' AFTER `dev_type`;
+
+#添加行业管理
+CREATE TABLE `devicemanage`.`tab_industry` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL COMMENT '行业名称',
+  `remork` TEXT NULL COMMENT '备注信息',
+  `c_time` DATETIME NULL COMMENT '创建时间',
+  `in_status` INT NULL DEFAULT 0 COMMENT '状态 0、可用 1、禁用',
+  PRIMARY KEY (`id`))
+COMMENT = '行业管理';
+
+
+#服务器添加行业归属
+ALTER TABLE `devicemanage`.`tab_ser`
+ADD COLUMN `in_id` INT NULL DEFAULT 0 AFTER `s_type`;
+
+ALTER TABLE `devicemanage`.`sys_user`
+ADD COLUMN `grade` INT NULL DEFAULT 1 COMMENT '用户等级' AFTER `sign`;
+
+
+ALTER TABLE `devicemanage`.`dev_list`
+ADD COLUMN `scan` INT NULL DEFAULT 0 COMMENT '标记是否扫码' AFTER `config_status`;
+
+ALTER TABLE `devicemanage`.`dev_list`
+CHANGE COLUMN `device_id` `device_id` VARCHAR(12) NULL DEFAULT NULL ;

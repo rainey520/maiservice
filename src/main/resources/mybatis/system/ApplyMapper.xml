@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.apply.mapper.ApplyMapper">
+
+    <resultMap type="Apply" id="ApplyResult">
+        <result property="id" column="id"/>
+        <result property="applyName" column="apply_name"/>
+        <result property="applyEmail" column="apply_email"/>
+        <result property="applyPhone" column="apply_phone"/>
+        <result property="applyCompany" column="apply_company"/>
+        <result property="applyIndustry" column="apply_industry"/>
+        <result property="applyLicense" column="apply_license"/>
+        <result property="remark" column="remark"/>
+        <result property="uId" column="u_id"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="examineStatus" column="examine_status"/>
+        <result property="examinePeople" column="examine_people"/>
+        <result property="examineTime" column="examine_time"/>
+        <result property="examineRemark" column="examine_remark"/>
+        <result property="serStatus" column="ser_status"/>
+        <result property="serId" column="ser_id"/>
+        <result property="portId" column="port_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="grade" column="grade"/>
+        <association property="industryName" column="apply_industry" select="selectIndustryName">
+            <result property="industryName" column="name"/>
+        </association>
+        <association property="examinePeopleName" column="examine_people" select="selectExaminePeopleName">
+            <result property="examinePeopleName" column="user_name"/>
+        </association>
+    </resultMap>
+    <resultMap type="Apply" id="ApplyResult1">
+        <result property="id" column="id"/>
+        <result property="applyName" column="apply_name"/>
+        <result property="applyEmail" column="apply_email"/>
+        <result property="applyPhone" column="apply_phone"/>
+        <result property="applyCompany" column="apply_company"/>
+        <result property="applyIndustry" column="apply_industry"/>
+        <result property="applyLicense" column="apply_license"/>
+        <result property="remark" column="remark"/>
+        <result property="uId" column="u_id"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="examineStatus" column="examine_status"/>
+        <result property="examinePeople" column="examine_people"/>
+        <result property="examineTime" column="examine_time"/>
+        <result property="examineRemark" column="examine_remark"/>
+        <result property="serStatus" column="ser_status"/>
+        <result property="serId" column="ser_id"/>
+        <result property="portId" column="port_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="grade" column="grade"/>
+        <association property="industryName" column="apply_industry" select="selectIndustryName">
+            <result property="industryName" column="name"/>
+        </association>
+        <association property="examinePeopleName" column="examine_people" select="selectExaminePeopleName">
+            <result property="examinePeopleName" column="user_name"/>
+        </association>
+        <association property="serverName" column="ser_id" select="selectServiceName">
+            <result property="serverName" column="sname"/>
+        </association>
+        <association property="serverPort" column="port_id" select="selectServicePort">
+            <result property="serverPort" column="port"/>
+        </association>
+    </resultMap>
+
+    <sql id="selectApplyVo">
+        select id, apply_name, apply_email, apply_phone, apply_company, apply_industry,
+        apply_license, remark, u_id, apply_time, examine_status, examine_people,
+         examine_time, examine_remark, ser_status, ser_id, port_id, create_id,grade from tab_apply
+    </sql>
+
+    <select id="selectApplyList" parameterType="Apply" resultMap="ApplyResult">
+        <include refid="selectApplyVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="applyName != null  and applyName != '' ">and apply_name like concat(#{applyName}, '%')</if>
+            <if test="applyEmail != null  and applyEmail != '' ">and apply_email like concat(#{applyEmail}, '%')</if>
+            <if test="applyPhone != null  and applyPhone != '' ">and apply_phone like concat(#{applyPhone}, '%')</if>
+            <if test="applyCompany != null  and applyCompany != '' ">and apply_company like concat(#{applyCompany},
+                '%')
+            </if>
+            <if test="applyIndustry != null and  applyIndustry > -1 ">and apply_industry = #{applyIndustry}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(apply_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(apply_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="examineStatus != null and examineStatus > -1">and examine_status = #{examineStatus}</if>
+            <if test="examinePeople != null and  examinePeople > -1">and examine_people = #{examinePeople}</if>
+
+            <if test="applyTime != null and applyTime != ''"><!-- 开始时间检索 -->
+                AND date_format(examine_time,'%y%m%d') &gt;= date_format(#{applyTime},'%y%m%d')
+            </if>
+            <if test="examineTime != null and examineTime != ''"><!-- 结束时间检索 -->
+                AND date_format(examine_time,'%y%m%d') &lt;= date_format(#{examineTime},'%y%m%d')
+            </if>
+            <if test="serStatus != null and  serStatus > -1">and ser_status = #{serStatus}</if>
+
+        </where>
+    </select>
+
+    <!--查询行业名称-->
+    <select id="selectIndustryName" resultType="java.lang.String">
+      SELECT `name` FROM tab_industry where  id = #{apply_industry};
+    </select>
+    <!--查询审核人名称-->
+    <select id="selectExaminePeopleName" resultType="java.lang.String">
+        SELECT user_name FROM sys_user where user_id = #{examine_people};
+    </select>
+    <!--查询服务器名称-->
+    <select id="selectServiceName" resultType="java.lang.String">
+        SELECT sname FROM tab_ser where id = #{ser_id};
+    </select>
+    <!--查询服务器端口-->
+    <select id="selectServicePort" resultType="java.lang.String">
+      SELECT `port` FROM tab_ser_port where id = #{port_id};
+    </select>
+
+    <select id="selectApplyById" parameterType="Integer" resultMap="ApplyResult1">
+        <include refid="selectApplyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertApply" parameterType="Apply" useGeneratedKeys="true" keyProperty="id">
+        insert into tab_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applyName != null  and applyName != ''  ">apply_name,</if>
+            <if test="applyEmail != null  and applyEmail != ''  ">apply_email,</if>
+            <if test="applyPhone != null  and applyPhone != ''  ">apply_phone,</if>
+            <if test="applyCompany != null  and applyCompany != ''  ">apply_company,</if>
+            <if test="applyIndustry != null  ">apply_industry,</if>
+            <if test="applyLicense != null  and applyLicense != ''  ">apply_license,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="uId != null  and uId != ''  ">u_id,</if>
+            <if test="applyTime != null  ">apply_time,</if>
+            <if test="examineStatus != null  ">examine_status,</if>
+            <if test="examinePeople != null  ">examine_people,</if>
+            <if test="examineTime != null  ">examine_time,</if>
+            <if test="examineRemark != null  ">examine_remark,</if>
+            <if test="serStatus != null  ">ser_status,</if>
+            <if test="serId != null  ">ser_id,</if>
+            <if test="portId != null  ">port_id,</if>
+            <if test="createId != null  ">create_id,</if>
+            <if test="grade != null  ">grade,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applyName != null  and applyName != ''  ">#{applyName},</if>
+            <if test="applyEmail != null  and applyEmail != ''  ">#{applyEmail},</if>
+            <if test="applyPhone != null  and applyPhone != ''  ">#{applyPhone},</if>
+            <if test="applyCompany != null  and applyCompany != ''  ">#{applyCompany},</if>
+            <if test="applyIndustry != null  ">#{applyIndustry},</if>
+            <if test="applyLicense != null  and applyLicense != ''  ">#{applyLicense},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="uId != null  and uId != ''  ">#{uId},</if>
+            <if test="applyTime != null  ">#{applyTime},</if>
+            <if test="examineStatus != null  ">#{examineStatus},</if>
+            <if test="examinePeople != null  ">#{examinePeople},</if>
+            <if test="examineTime != null  ">#{examineTime},</if>
+            <if test="examineRemark != null  ">#{examineRemark},</if>
+            <if test="serStatus != null  ">#{serStatus},</if>
+            <if test="serId != null  ">#{serId},</if>
+            <if test="portId != null  ">#{portId},</if>
+            <if test="createId != null  ">#{createId},</if>
+            <if test="grade != null  ">#{grade},</if>
+        </trim>
+    </insert>
+
+    <update id="updateApply" parameterType="Apply">
+        update tab_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyName != null  and applyName != ''  ">apply_name = #{applyName},</if>
+            <if test="applyEmail != null  and applyEmail != ''  ">apply_email = #{applyEmail},</if>
+            <if test="applyPhone != null  and applyPhone != ''  ">apply_phone = #{applyPhone},</if>
+            <if test="applyCompany != null  and applyCompany != ''  ">apply_company = #{applyCompany},</if>
+            <if test="applyIndustry != null  ">apply_industry = #{applyIndustry},</if>
+            <if test="applyLicense != null  and applyLicense != ''  ">apply_license = #{applyLicense},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="uId != null  and uId != ''  ">u_id = #{uId},</if>
+            <if test="applyTime != null  ">apply_time = #{applyTime},</if>
+            <if test="examineStatus != null  ">examine_status = #{examineStatus},</if>
+            <if test="examinePeople != null  ">examine_people = #{examinePeople},</if>
+            <if test="examineTime != null  ">examine_time = #{examineTime},</if>
+            <if test="examineRemark != null  ">examine_remark = #{examineRemark},</if>
+            <if test="serStatus != null  ">ser_status = #{serStatus},</if>
+            <if test="serId != null  ">ser_id = #{serId},</if>
+            <if test="portId != null  ">port_id = #{portId},</if>
+            <if test="createId != null  ">create_id = #{createId},</if>
+            <if test="grade != null  ">grade = #{grade},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!--根据用户查询当前用户最新的申请信息-->
+    <select id="selectApplyByCreateId" resultMap="ApplyResult">
+        SELECT * FROM tab_apply where create_id = #{createId} order by apply_time desc limit 1;
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#modify_password" data-toggle="tab" aria-expanded="true">重置密码</a></li>
+            <li ><a href="#user_info" data-toggle="tab"
+                                  aria-expanded="false">页面密码</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <!--修改密码-->
+            <div class="tab-pane active" id="modify_password">
+                <form class="form-horizontal" id="form-user-resetPwd">
+                    <input type="hidden" id="page-id" th:value="${p.id}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">新密码：</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" name="newPassword"
+                                   id="newPassword" placeholder="请输入新密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">确认密码：</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="password" name="confirm"
+                                   id="confirm"
+                                   placeholder="请确认密码">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane " id="user_info" style="text-align: center;padding: 50px;">
+                <h3 style="font-size: 30px;" th:utext="${p.pagePwd}"></h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script>
+    $("#form-user-resetPwd").validate({
+        rules: {
+            newPassword: {
+                required: true,
+                minlength: 5,
+                maxlength: 20
+            },
+            confirm: {
+                required: true,
+                equalTo: "#newPassword"
+            }
+        },
+        messages: {
+            oldPassword: {
+                required: "请输入原密码",
+                remote: "原密码错误"
+            },
+            newPassword: {
+                required: "请输入新密码",
+                minlength: "密码不能小于6个字符",
+                maxlength: "密码不能大于20个字符"
+            },
+            confirm: {
+                required: "请再次输入新密码",
+                equalTo: "两次密码输入不一致"
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            add();
+        }
+    }
+
+    function add() {
+        var id = $("#page-id").val();
+        var pagePwd = $("#newPassword").val();
+        $.ajax({
+            cache : true,
+            type : "POST",
+            url : ctx + "page/pageInfo/savePwd",
+            data : {
+                "id": id,
+                "pagePwd": pagePwd,
+            },
+            async : false,
+            error : function(request) {
+                $.modal.alertError("系统错误");
+            },
+            success : function(data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

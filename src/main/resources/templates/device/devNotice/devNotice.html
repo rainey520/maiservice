@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            消息创建者：
+                            <select id="createId" name="createId" style="width: 180px"
+                                    th:with="user=${@user.selectComAllUser(#httpServletRequest.getCookies())}">
+                                <option value="">请选择</option>
+                                <option th:each="u : ${user}" th:text="${u.userName}" th:value="${u.userId}"></option>
+                            </select>
+                        </li>
+
+                        <li>
+                            消息状态:
+                            <select name="noticeStatus" style="width: 80px">
+                                <option value="">全部</option>
+                                <option value="1">未发布</option>
+                                <option value="2">已发布</option>
+                                <option value="3">已下线</option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>创建时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()" shiro:hasPermission="device:devNotice:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="edit()"
+               shiro:hasPermission="device:devNotice:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="device:devNotice:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="device:devNotice:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('device:devNotice:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('device:devNotice:remove')}]];
+    var prefix = ctx + "device/devNotice";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "公司消息通知",
+            search: false,
+            showExport: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '消息主键ID',
+                    visible: false
+                },
+                {
+                    field: 'noticeContent',
+                    title: '通知内容',
+                    sortable: true
+                },
+                {
+                    field: 'createUser.userName',
+                    title: '创建者',
+                },
+                {
+                    field: 'noticeStatus',
+                    title: '消息状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.noticeStatus == 1) {
+                            return '<span class="badge badge-warning">未发布</span>';
+                        } else if (row.noticeStatus == 2) {
+                            return '<span class="badge badge-primary">已发布</span>';
+                        } else if (row.noticeStatus == 3) {
+                            return '<span class="badge badge-success">已下线</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '消息创建时间',
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        if (row.noticeStatus == 1) { // 消息发布按钮
+                            actions.push('<a class="btn btn-warning btn-xs ' + editFlag + '" href="#" onclick="publish(\'' + row.id + '\')"><li></li>发布</a> ');
+                        } else if (row.noticeStatus == 2 || row.noticeStatus == 3) { // 点击发布按钮，消息下线
+                            actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="#" onclick="publishEnd(\'' + row.id + '\')"><li></li>下线</a> ');
+                        }
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><li></li>编辑</a> ');
+                        if (row.noticeStatus == 2 || row.noticeStatus == 3) { // 已经发布或者下线的消息不能删除
+                            actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" disabled="true"><i></i>删除</a> ');
+                        } else {
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i></i>删除</a>');
+                        }
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /** 添加消息 */
+    function add() {
+        $.modal.open("新增消息", prefix + "/add", 800, 300);
+    }
+
+    /** 编辑消息 */
+    function edit(id) {
+        var url = prefix + "/edit/{id}";
+        if ($.common.isNotEmpty(id)) {
+            url = $.table._option.updateUrl.replace("{id}", id);
+        } else {
+            var id = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+            if (id.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            url = $.table._option.updateUrl.replace("{id}", id);
+        }
+        $.modal.open("修改产线", url, 800, 300);
+    }
+
+    /**
+     * 发布消息
+     * @param id
+     */
+    function publish(id) {
+        $.modal.confirm("确认发布消息吗", function () {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                dataType: 'json',
+                url: prefix + "/publish",
+                data: {
+                    "id": id,
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        $.modal.alertWarning("消息已经发布");
+                        $.table.search();
+                    } else {
+                        $.modal.alertError(data.msg);
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * 下线消息
+     * @param id
+     */
+    function publishEnd(id) {
+        $.modal.confirm("确认下线消息吗", function () {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                dataType: 'json',
+                url: prefix + "/publishEnd",
+                data: {
+                    "id": id,
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        $.modal.alertWarning("消息已经下线");
+                        $.table.search();
+                    } else {
+                        $.modal.alertError(data.msg);
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

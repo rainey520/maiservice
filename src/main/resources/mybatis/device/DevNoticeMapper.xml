@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.device.devNotice.mapper.DevNoticeMapper">
+    
+    <resultMap type="DevNotice" id="DevNoticeResult">
+        <result property="id"    column="notice_id"    />
+        <result property="noticeContent"    column="notice_content"    />
+        <result property="createId"    column="create_by"    />
+        <result property="receiveBy"    column="receive_by"    />
+        <result property="noticeStatus"    column="notice_status"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+	
+	<sql id="selectDevNoticeVo">
+        select notice_id, notice_content, create_by, receive_by, notice_status, company_id, create_time from dev_notice
+    </sql>
+	
+    <select id="selectDevNoticeList" parameterType="DevNotice" resultMap="DevNoticeResult">
+        <include refid="selectDevNoticeVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+             <if test="noticeContent != null  and noticeContent != '' "> and notice_content = #{noticeContent}</if>
+             <if test="createId != null  and createId != '' "> and create_id = #{createId}</if>
+             <if test="receiveBy != null  and receiveBy != '' "> and receive_by = #{receiveBy}</if>
+             <if test="noticeStatus != null "> and notice_status = #{noticeStatus}</if>
+             <if test="companyId != null "> and company_id = #{companyId}</if>
+             <if test="createTime != null "> and create_time = #{createTime}</if>
+             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+             </if>
+             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+             </if>
+         </where>
+    </select>
+    
+    <select id="selectDevNoticeById" parameterType="Integer" resultMap="DevNoticeResult">
+        <include refid="selectDevNoticeVo"/>
+        where notice_id = #{id}
+    </select>
+        
+    <insert id="insertDevNotice" parameterType="DevNotice" useGeneratedKeys="true" keyProperty="id">
+        insert into dev_notice
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="noticeContent != null  and noticeContent != ''  ">notice_content,</if>
+			<if test="createId != null  and createId != ''  ">create_by,</if>
+			<if test="receiveBy != null  and receiveBy != ''  ">receive_by,</if>
+			<if test="noticeStatus != null  ">notice_status,</if>
+			<if test="companyId != null  ">company_id,</if>
+			<if test="createTime != null  ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="noticeContent != null  and noticeContent != ''  ">#{noticeContent},</if>
+			<if test="createId != null  and createId != ''  ">#{createId},</if>
+			<if test="receiveBy != null  and receiveBy != ''  ">#{receiveBy},</if>
+			<if test="noticeStatus != null  ">#{noticeStatus},</if>
+			<if test="companyId != null  ">#{companyId},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateDevNotice" parameterType="DevNotice">
+        update dev_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="noticeContent != null  and noticeContent != ''  ">notice_content = #{noticeContent},</if>
+            <if test="createId != null  and createId != ''  ">create_by = #{createId},</if>
+            <if test="receiveBy != null  and receiveBy != ''  ">receive_by = #{receiveBy},</if>
+            <if test="noticeStatus != null  ">notice_status = #{noticeStatus},</if>
+            <if test="companyId != null  ">company_id = #{companyId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+        </trim>
+        where notice_id = #{id}
+    </update>
+
+	<delete id="deleteDevNoticeById" parameterType="Integer">
+        delete from dev_notice where notice_id = #{id}
+    </delete>
+	
+    <delete id="deleteDevNoticeByIds" parameterType="String">
+        delete from dev_notice where notice_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询对应公司的所有消息-->
+    <select id="selectAllNotice" parameterType="Integer" resultMap="DevNoticeResult">
+        <include refid="selectDevNoticeVo"/>
+        where company_id = #{companyId} and notice_status = 2;
+    </select>
+    
+</mapper>

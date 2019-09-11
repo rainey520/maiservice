@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.serPort.mapper.SerPortMapper">
+    
+    <resultMap type="SerPort" id="SerPortResult">
+        <result property="id"    column="id"    />
+        <result property="sid"    column="sid"    />
+        <result property="port"    column="port"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <association property="sname" column="sid" select="selectSerName">
+            <result property="sname" column="sname"/>
+        </association>
+        <association property="cname" column="company_id" select="selectCName">
+            <result property="cname" column="cname"/>
+        </association>
+    </resultMap>
+
+    <resultMap type="SerPort" id="SerPortResult1">
+        <result property="id"    column="id"    />
+        <result property="sid"    column="sid"    />
+        <result property="port"    column="port"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectSerPortVo">
+        select id, sid, port, company_id, update_time, create_time,remark from tab_ser_port
+    </sql>
+	
+    <select id="selectSerPortList" parameterType="SerPort" resultMap="SerPortResult">
+        <include refid="selectSerPortVo"/>
+        <where>
+              sid = #{sid}
+             <if test="port != null "> and port = #{port}</if>
+         </where>
+    </select>
+
+    <!--查询服务器名称-->
+    <select id="selectSerName" resultType="java.lang.String">
+        SELECT sname FROM tab_ser where id = #{sid};
+    </select>
+    <!--查询公司名称-->
+    <select id="selectCName" resultType="java.lang.String">
+        SELECT com_name as cname FROM dev_company where company_id = #{company_id};
+    </select>
+    
+    <select id="selectSerPortById" parameterType="Integer" resultMap="SerPortResult">
+        <include refid="selectSerPortVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSerPort" parameterType="SerPort" useGeneratedKeys="true" keyProperty="id">
+        insert into tab_ser_port
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sid != null  ">sid,</if>
+			<if test="port != null  ">port,</if>
+			<if test="companyId != null  ">company_id,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="remark != null  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="sid != null  ">#{sid},</if>
+			<if test="port != null  ">#{port},</if>
+			<if test="companyId != null  ">#{companyId},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="remark != null  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateSerPort" parameterType="SerPort">
+        update tab_ser_port
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sid != null  ">sid = #{sid},</if>
+            <if test="port != null  ">port = #{port},</if>
+            <if test="companyId != null  ">company_id = #{companyId},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="remark != null  ">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteSerPortById" parameterType="Integer">
+        delete from tab_ser_port where id = #{id}
+    </delete>
+	
+    <delete id="deleteSerPortByIds" parameterType="String">
+        delete from tab_ser_port where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询服务器端口配置总数-->
+    <select id="countSerPort" resultType="java.lang.Integer">
+        SELECT count(*) FROM tab_ser_port where sid = #{sid};
+    </select>
+
+    <!--查询对应的服务器的端口是否存在-->
+    <select id="findSidPort" resultType="java.lang.Integer">
+          SELECT count(*) FROM tab_ser_port where sid = #{sid} and port =#{port};
+    </select>
+
+    <!--查询未配置的服务端口-->
+    <select id="selectNotConfigSerPort" resultMap="SerPortResult1">
+        SELECT b.* FROM tab_ser as a,tab_ser_port as b where a.id = b.sid and  a.s_status = 0 and a.s_type = 0
+        and a.suser_num &lt; a.max_num and b.company_id = 0 order by a.create_time asc limit 1;
+    </select>
+
+    <!---->
+    <select id="selectSerPortByCompanyId" resultMap="SerPortResult1">
+        <include refid="selectSerPortVo"/>
+        where company_id = #{cid} limit 1;
+    </select>
+    <!--根据公司id查询对应的服务端口-->
+    <select id="selectInfoByCompanyId" resultMap="SerPortResult1">
+        SELECT * FROM tab_ser_port where company_id = #{companyId} limit 1;
+    </select>
+
+    <!--根据服务器id查询对应可用端口-->
+    <select id="selectSerPortBySerId" resultMap="SerPortResult1">
+        SELECT * FROM tab_ser_port where sid = #{serId} and company_id = 0;
+    </select>
+</mapper>

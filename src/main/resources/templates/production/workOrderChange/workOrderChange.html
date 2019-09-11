@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/layer/laydate/laydate.css}" rel="stylesheet"/>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		 <div class="col-sm-12 select-table">
+			 <div class="row">
+				 <div class="col-sm-3">
+					 <div class="ibox float-e-margins">
+						 <div class="ibox-title">
+							 <h5>变更操作</h5>
+						 </div>
+						 <div class="ibox-content">
+							 <form  id="form-work-order-change">
+								 <div class="form-group" >
+									 <input type="hidden" id="id" name="id" th:value="${order.id}">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">选择产线：</label>
+									 <div class="col-sm-12">
+										 <select  name="lineId" id="lineId" onchange="findDeviceLiableByLineId(this)" class="form-control" th:field="${order.lineId}"
+												 th:with="productionLine=${@productionLine.selectAllProductionLineByCompanyId()}">
+											 <option th:each="line : ${productionLine}" th:text="${line.lineName}"
+													 th:value="${line.Id}"></option>
+										 </select>
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">责任人1：</label>
+									 <div class="col-sm-12">
+										 <!--显示责任人名称-->
+										 <input id="userName1" name="userName1" th:value="${order.productionLine == null?'':order.productionLine.deviceLiableName}" class="form-control" type="text" readonly="true">
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">责任人2：</label>
+									 <div class="col-sm-12">
+										 <input id="userName2" name="userName2" th:value="${order.productionLine == null?'':order.productionLine.deviceLiableTowName}" class="form-control" type="text" readonly="true">
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">生产数量：</label>
+									 <div class="col-sm-12">
+										 <input id="productNumber" th:value="${order.productNumber}" name="productNumber" class="form-control" type="number">
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">计划生产开始时间：</label>
+									 <div class="col-sm-12">
+										 <input id="productionStart" th:value="${#dates.format(order.productionStart,'yyyy/MM/dd HH:mm:ss')}" name="productionStart" class="form-control layer-date">
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">计划生产完成时间：</label>
+									 <div class="col-sm-12">
+										 <input id="productionEnd" th:value="${#dates.format(order.productionEnd,'yyyy/MM/dd HH:mm:ss')}" name="productionEnd" class="form-control layer-date">
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <label class="col-sm-12 control-label" style="margin-top: 10px;">备注信息：</label>
+									 <div class="col-sm-12">
+										 <textarea id="remark" class="form-control" rows="4" type="text" name="remark"></textarea>
+									 </div>
+								 </div>
+								 <div class="form-group">
+									 <div style="width: 100%;text-align: center;">
+										 <a class="btn btn-primary btn-rounded btn-sm" style="margin-top: 15px" onclick="submitHandler()"><i class="fa fa-save"></i>&nbsp;保存更改</a>
+									 </div>
+								 </div>
+							 </form>
+						 </div>
+					 </div>
+				 </div>
+				 <div class="col-sm-9">
+					 <div class="ibox float-e-margins">
+						 <div class="ibox-title">
+							 <h5>变更详情</h5>
+						 </div>
+						 <div class="ibox-content">
+							 <table id="bootstrap-table" ></table>
+						 </div>
+					 </div>
+				 </div>
+			 </div>
+		 </div>
+	</div>
+    <div th:include="include :: footer"></div>
+	 <script th:src="@{/ajax/libs/layer/laydate/laydate.js}"></script>
+    <script th:inline="javascript">
+		//日期范围限制
+		var start = {
+			elem: '#productionStart',
+			format: 'YYYY/MM/DD hh:mm',
+			min: laydate.now(), //设定最小日期为当前日期
+			max: '2099-06-16 23:59:59', //最大日期
+			istime: true,
+			istoday: false,
+			choose: function (datas) {
+				end.min = datas; //开始日选好后，重置结束日的最小日期
+				end.start = datas //将结束日的初始值设定为开始日
+			}
+		};
+		var end = {
+			elem: '#productionEnd',
+			format: 'YYYY/MM/DD hh:mm:ss',
+			min: laydate.now(),
+			max: '2099-06-16 23:59:59',
+			istime: true,
+			istoday: false,
+			choose: function (datas) {
+				start.max = datas; //结束日选好后，重置开始日的最大日期
+			}
+		};
+		laydate(start);
+		laydate(end);
+        var prefix = ctx + "production/workOrderChange";
+		var params = $("#bootstrap-table").bootstrapTable('getOptions');
+		var data = function (params) {
+			var search = {};
+			search.orderId=[[${order.id}]];
+			search.pageSize = params.limit;
+			search.pageNum = params.offset / params.limit + 1;
+			search.searchValue = params.search;
+			search.orderByColumn = params.sort;
+			search.isAsc = params.order;
+			return search;
+		}
+
+		/**
+		 * 点击产线查询产线责任人
+		 */
+		function findDeviceLiableByLineId(value) {
+			var lineId = value.value;
+			$.ajax({
+				type: 'POST',
+				url: '/production/productionLine/findDeviceLiableByLineId',
+				data: {
+					"lineId": lineId,
+				},
+				dataType: 'json',
+				async: false,  //同步请求，
+				success: function (data) {
+					$("#userName1").val(data.data.user1.userName);
+					$("#userName2").val(data.data.user2.userName);
+				}
+			});
+		}
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "工单变更",
+				search: false,
+		        showExport: true,
+				showSearch: false,
+				showRefresh:false,
+				showColumns:false,
+				showToggle:false,
+				showExport:false,
+				queryParams:data,
+				sortName:'createTime',
+				sortOrder:'desc',
+                columns: [
+				{
+					field : 'id', 
+					title : '主键，自增长',
+					visible: false
+				},
+				{
+					field : 'lineName', 
+					title : '产线名称',
+					sortable: true
+				},
+				{
+					field : 'deviceLiable', 
+					title : '第一责任人',
+					sortable: true
+				},
+				{
+					field : 'deviceLiable2', 
+					title : '第二责任人',
+					sortable: true
+				},
+				{
+					field : 'productionStart', 
+					title : '计划开始时间',
+					sortable: true
+				},
+				{
+					field : 'productionEnd', 
+					title : '计划结束时间',
+					sortable: true
+				},
+				{
+					field : 'productNumber', 
+					title : '生产数量',
+					sortable: true
+				},
+				{
+					field : 'createPeople', 
+					title : '操作者',
+					sortable: true
+				},
+				{
+					field : 'createTime', 
+					title : '变更时间',
+					sortable: true
+				},{
+						field : 'remark',
+						title : '备注信息'
+					}]
+            };
+            $.table.init(options);
+        });
+		$("#form-work-order-change").validate({
+			rules:{
+				lineId:{
+					required:true,
+				},
+				productNumber:{
+					required:true,
+				},
+				productionStart:{
+					required:true,
+				},
+				productionEnd:{
+					required:true,
+				}
+			},
+			messages:{
+				lineId:{
+					required:"请选择产线",
+				},
+				productNumber:{
+					required:"请填写生产数量",
+				},
+				productionStart:{
+					required:"请选择计划开始时间",
+				},
+				productionEnd:{
+					required:"请选择计划结束时间",
+				}
+			}
+		});
+		function submitHandler() {
+			// 时间判断
+			if ($.validate.form()) {
+				var productionStart = $("#productionStart").val();
+				var productionEnd = $("#productionEnd").val();
+				var start = new Date(productionStart.replace(/\-/g, "\/"));
+				var end = new Date(productionEnd.replace(/\-/g, "\/"));
+				if (productionStart != "" && productionEnd != "" && start > end) {
+					$.modal.alertWarning("开始时间不能大于结束时间");
+					return;
+				}
+				var config = {
+					url: "/device/devWorkOrder/chang",
+					type: "post",
+					dataType: "json",
+					data: $('#form-work-order-change').serialize(),
+					beforeSend: function () {
+						$.modal.loading("正在处理中，请稍后...");
+						$.modal.disable();
+					},
+					success: function (result) {
+						if (result.code == web_status.SUCCESS) {
+							$.modal.msg("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+							var params = $("#bootstrap-table").bootstrapTable('getOptions');
+							params.queryParams = function (params) {
+								var search = {};
+								search.orderId=[[${order.id}]];
+								search.pageSize = params.limit;
+								search.pageNum = params.offset / params.limit + 1;
+								search.searchValue = params.search;
+								search.orderByColumn = params.sort;
+								search.isAsc = params.order;
+								return search;
+							}
+							$("#bootstrap-table").bootstrapTable('refresh', params);
+						} else {
+							$.modal.alertError(result.msg);
+						}
+						$.modal.closeLoading();
+					}
+				};
+				$.ajax(config)
+			}
+		}
+    </script>
+</body>
+</html>

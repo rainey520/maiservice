@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								<input type="hidden" name="sid" th:value="${ser.id}"/>
+							</li>
+
+							<li>
+								端口：<input type="text" name="port"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="add()" shiro:hasPermission="system:serPort:add">
+					<i class="fa fa-plus"></i> 添加
+				</a>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:serPort:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:serPort:remove')}]];
+        var prefix = ctx + "system/serPort";
+		var s_type = [[${ser.s_type}]]
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+				exportUrl: prefix + "/export",
+                modalName: "端口配置",
+				sortName: "createTime",
+				sortOrder:"desc",
+				search: false,
+		        showExport: true,
+				showSearch:false,
+				showRefresh:false,
+				showColumns:false,
+				showToggle:false,
+				showExport:false,
+                columns: [
+				{
+					field : 'id', 
+					title : '主键',
+					visible: false
+				},
+				{
+					field : 'sname',
+					title : '服务器',
+					sortable: true
+				},
+				{
+					field : 'port', 
+					title : '端口',
+					sortable: true
+				},
+				{
+					field : 'cname',
+					title : '公司',
+					sortable: true,
+					formatter:function (value, row, index) {
+						if(row.companyId == 0){
+							return "未配置"
+						}
+						return value;
+					}
+				},
+				{
+					field : 'updateTime', 
+					title : '配置时间',
+					sortable: true,
+					formatter:function (value, row, index) {
+						if(row.companyId == 0){
+							return "-"
+						}
+						return value;
+					}
+				},
+				{
+					field : 'createTime', 
+					title : '创建时间',
+					sortable: true
+				},
+					{
+						field : 'remark',
+						title : '备注信息',
+						sortable: true
+					},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	var actions = [];
+		            	if(s_type == 1){
+							if(row.companyId == 0){
+								actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="configCompany(\'' + row.id + '\')"><i class="fa fa-edit"></i>指定公司</a> ');
+							}else{
+								actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" disabled="true"><i class="fa fa-edit"></i>指定公司</a> ');
+							}
+						}
+						if(row.companyId == 0){
+							actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+							actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+						}else{
+							actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" disabled="true"><i class="fa fa-edit"></i>编辑</a> ');
+							actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" disabled="true"><i class="fa fa-remove"></i>删除</a>');
+						}
+						return actions.join('');
+		            }
+		        }]
+            };
+            $.table.init(options);
+            $.table.search()
+        });
+
+		/**
+		 * 添加端口信息
+		 */
+		function add() {
+			var sid =[[${ser.id}]];
+			$.post("/system/ser/findMax",{sid:sid},function (data) {
+				if(data.code == 0){
+					if(data.data){
+						$.modal.open("添加端口信息",prefix+"/add?sid="+sid,800,340)
+					}else{
+						$.modal.alertWarning("端口配置已经是最大数");
+					}
+				}else{
+					$.modal.alertError(data.msg);
+				}
+			})
+		}
+
+		/**
+		 * 修改端口信息
+		 * @param id
+		 */
+		function edit(id) {
+			$.modal.open("修改端口信息",prefix+"/edit/"+id,800,340)
+		}
+
+		/**
+		 * 删除信息
+		 * @param id
+		 */
+		function remove (id) {
+			$.modal.confirm("确定删除该条" + $.table._option.modalName + "信息吗？", function () {
+				$.post(prefix+"/portIsConfig",{id:id},function (data) {
+					if(data.code == 0){
+						if(data.data){
+							alert("端口已经配置不能删除")
+							// $.model.alertWarning("端口已经配置不能删除")
+						}else{
+							$.post(prefix+"/remove",{id:id},function (data) {
+								if(data.code == 0){
+									$.table.search();
+								}else{
+									$.model.alertWarning(data.msg)
+								}
+							})
+						}
+					}else{
+						$.model.alertWarning(data.msg)
+					}
+				})
+
+			});
+		}
+
+		/**
+		 * 指定公司
+		 * @param id
+		 */
+		function configCompany(id) {
+			$.modal.open("指定公司",prefix+"/configCompany/"+id,800,340)
+		}
+    </script>
+</body>
+</html>

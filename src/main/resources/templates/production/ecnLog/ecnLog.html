@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<input type="hidden" id="saveId" name="saveId" th:value="${save_id}">
+					<input type="hidden" id="ecnType" name="ecnType" th:value="${ecn_type}">
+					<div class="select-list">
+						<ul>
+							<li >
+								ECN：
+								<select class="form-control" id="ecnStatus" onchange="ecnStatusChange(this)">
+								<option value="0" th:selected="${ecn_status == 0}">未改变</option>
+								<option value="1" th:selected="${ecn_status == 1}">有改变</option>
+							</select>
+							</li>
+							<li id="ecn-text-li" th:style="${ecn_status == 0?'display: none':''}">
+								信息备注：<textarea type="text" id="ecnText" style="min-width: 380px" rows="3" class="form-control" name="ecnText"></textarea>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" style="margin-top: 40px;"
+								   onclick="addEcn()"><i class="fa fa-save"></i>&nbsp;保存操作</a>
+								<a class="btn btn-primary btn-rounded btn-sm" style="margin-top: 40px;" onclick="$.table.search()"><i
+										class="fa fa-search"></i>&nbsp;搜索</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var prefix = ctx + "production/ecnLog";
+        var editFlag = [[${@permission.hasPermi('production:ecnLog:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('production:ecnLog:remove')}]];
+		// var params = $("#bootstrap-table").bootstrapTable('getOptions');
+		// var data = function (params) {
+		// 	var search = {};
+		// 	search.ecnType=[[${ecn_type}]];
+		// 	search.saveId=[[${save_id}]];
+		// 	search.pageSize = params.limit;
+		// 	search.pageNum = params.offset / params.limit + 1;
+		// 	search.searchValue = params.search;
+		// 	search.orderByColumn = params.sort;
+		// 	search.isAsc = params.order;
+		// 	return search;
+		// }
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "ECN 变更记录",
+				search: false,
+		        showExport: true,
+				sortOrder:'desc',
+				sortName:'createTime',
+				showSearch:false,
+				showRefresh:false,
+				showColumns:false,
+				showToggle:false,
+				showExport:false,
+				// queryParams:data,
+                columns: [
+				{
+					field : 'id', 
+					title : '主键，自增长',
+					visible: false
+				},
+				{
+					field : 'ecnType',
+					title : '保存类型',
+					sortable: true,
+					formatter: function (value,row,index) {
+						if (row.ecnType == 1) {
+                            return '<span style="font-weight: bold;color:green">产品E/DCN</span>';
+						} else {
+						    return '<span style="font-weight: bold;color:blue">工单E/DCN</span>';
+						}
+                    }
+				},
+				{
+					field : 'ecnText', 
+					title : '信息备注',
+					sortable: true
+				},
+				{
+					field : 'createPeople', 
+					title : '操作者',
+					sortable: true,
+					width:80
+				},
+				{
+					field : 'createTime', 
+					title : '操作时间',
+					sortable: true,
+					width:180
+				},
+				{
+					title:'管理',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+					},
+					width:180
+				}]
+            };
+            $.table.init(options);
+            $.table.search();
+        });
+
+		/**
+		 * ecn状态改变
+		 */
+		function ecnStatusChange(val) {
+			var s = $(val).val();
+			if(s == 1){
+				$("#ecn-text-li").css("display","inline-block")
+			}else{
+				$("#ecn-text-li").css("display","none");
+				$("#ecn-text-li").find("textarea").val("");
+			}
+		}
+
+		/**
+		 * 保存ecn信息
+		 */
+		function addEcn() {
+			var st = $("#ecnStatus").val();
+			var t = $("#ecnText").val();
+			var data={
+				id:[[${save_id}]],
+				ecnStatus:st,
+				ecnText:t,
+			}
+			if(st == 1 && !t){
+				$.modal.alertWarning("请填写更变信息");
+				return;
+			}
+			var config = {
+				url: "/product/ecn",
+				type: "post",
+				dataType: "json",
+				data: data,
+				beforeSend: function () {
+					$.modal.loading("正在处理中，请稍后...");
+				},
+				success: function (result) {
+					if (result.code == web_status.SUCCESS) {
+						$.modal.msg("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+						var params = $("#bootstrap-table").bootstrapTable('getOptions');
+						params.queryParams = function (params) {
+							var search = {};
+							search.ecnType=[[${ecn_type}]];
+							search.saveId=[[${save_id}]];
+							search.pageSize = params.limit;
+							search.pageNum = params.offset / params.limit + 1;
+							search.searchValue = params.search;
+							search.orderByColumn = params.sort;
+							search.isAsc = params.order;
+							return search;
+						}
+						$("#bootstrap-table").bootstrapTable('refresh', params);
+					} else {
+						$.modal.alertError(result.msg);
+					}
+					$.modal.closeLoading();
+				}
+			};
+			$.ajax(config)
+		}
+
+        /**
+		 * 修改ECN变更
+         * @param id
+         */
+		function edit(id) {
+            var url = prefix+"/edit/" + id;
+            $.modal.open("修改ECN变更记录",url,400,300);
+        }
+
+        /**
+		 * 删除ECN变更记录
+         * @param id
+         */
+        function remove(id) {
+            $.modal.confirm("确定删除该条ECN变更记录吗？", function () {
+                var url = prefix +"/remove/";
+                $.post(url,{id:id},function (result) {
+                    $.operate.ajaxSuccess(result);
+                })
+            });
+        }
+
+        function submitHandler() {
+            $.modal.close();
+            window.parent.$.table.refresh();
+        }
+    </script>
+</body>
+</html>

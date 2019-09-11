@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.industry.mapper.IndustryMapper">
+    
+    <resultMap type="Industry" id="IndustryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="remork"    column="remork"    />
+        <result property="cTime"    column="c_time"    />
+        <result property="inStatus"    column="in_status"    />
+    </resultMap>
+	
+	<sql id="selectIndustryVo">
+        select id, `name`, remork, c_time, in_status from tab_industry
+    </sql>
+	
+    <select id="selectIndustryList" parameterType="Industry" resultMap="IndustryResult">
+        <include refid="selectIndustryVo"/>
+        <where>
+             <if test="name != null  and name != '' "> and `name` like concat('%', #{name}, '%')</if>
+         </where>
+    </select>
+    
+    <select id="selectIndustryById" parameterType="Integer" resultMap="IndustryResult">
+        <include refid="selectIndustryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIndustry" parameterType="Industry" useGeneratedKeys="true" keyProperty="id">
+        insert into tab_industry
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null  and name != ''  ">name,</if>
+			<if test="remork != null  and remork != ''  ">remork,</if>
+			<if test="cTime != null  ">c_time,</if>
+			<if test="inStatus != null  ">in_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null  and name != ''  ">#{name},</if>
+			<if test="remork != null  and remork != ''  ">#{remork},</if>
+			<if test="cTime != null  ">#{cTime},</if>
+			<if test="inStatus != null  ">#{inStatus},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateIndustry" parameterType="Industry">
+        update tab_industry
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="remork != null  and remork != ''  ">remork = #{remork},</if>
+            <if test="inStatus != null  ">in_status = #{inStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteIndustryById" parameterType="Integer">
+        delete from tab_industry where id = #{id}
+    </delete>
+	
+    <delete id="deleteIndustryByIds" parameterType="String">
+        delete from tab_industry where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询所以可用行业-->
+    <select id="selectIsAll" resultMap="IndustryResult">
+        select id, `name` from tab_industry where in_status = 0;
+    </select>
+</mapper>

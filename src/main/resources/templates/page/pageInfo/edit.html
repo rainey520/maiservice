@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/cropbox/cropbox.css}" rel="stylesheet"/>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>基本数据</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="panel-body">
+						<div class="panel-group" id="accordion1">
+							<form role="form" id="form-page-add" th:object="${pageInfo}">
+								<input name="id"  type="hidden"  th:field="*{id}" />
+								<div class="form-group">
+									<label class="col-sm-12 control-label">页面名称</label>
+									<div class="col-sm-12">
+										<input type="text" name="pageName" th:field="*{pageName}" placeholder="请输入页面名称" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-12 control-label">布局类型</label>
+									<div class="col-sm-12">
+										<select id="layout_type" th:with="layout =${@layout.selectLayoutAll(0)}" class="form-control m-b" name="pageLayoutType">
+											<option th:each="dict : ${layout}" th:text="${dict.layout_name}" th:field="*{pageLayoutType}"  th:layout-type="${dict.layout_type}" th:value="${dict.id}"></option>
+										</select>
+									</div>
+								</div>
+								<div>
+									<div class="text-center">
+										<p><img width="120" id="add_page_back_url" height="120" th:src="${#strings.isEmpty(pageInfo.pageBackImg)?'/js/bk.jpg':pageInfo.pageBackImg}"></p>
+										<p><a href="javascript:pageBack()">背景图片</a></p>
+									</div>
+								</div>
+								<div>
+									<a onclick="submitHandler()"  class="btn btn-primary btn-rounded btn-block" >
+										<i class="fa fa-save"></i> 保存
+									</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-8">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5 id="layout_title"></h5>
+				</div>
+				<div class="ibox-content">
+					<div class="panel-body">
+						<div class="panel-group" id="accordion">
+							<!--详情页面-->
+							<div id="detail_pane" th:with="layout =${@layout.selectLayoutAll(0)}">
+								<div th:data-detail="${lay.id}" th:each="lay : ${layout}"  >
+									<div class="col-sm-12" th:if="${lay.layout_type == 1}">
+										<div class="row" th:with="init =${@page.selectPageInitInfo(1,#httpServletRequest.getCookies())}" >
+											<div th:if="${init == null or init['line'] == null }" class="col-sm-6">
+												<h4 style="color: red">请建立相关产线或者产线配置相关硬件...</h4>
+											</div>
+											<div th:if="${init != null and init['line'] != null }" class="col-sm-6" th:each="i:${#numbers.sequence(1,lay.layout_num)}">
+												<div th:style="${i > 2 ? 'margin-top: 15px;':''}" class="panel panel-primary">
+													<div class="panel-heading">
+														宮格<span th:text="${i}"></span>
+													</div>
+													<div class="panel-body">
+														<div class="form-group"  >
+															<label>生产线</label>
+															<select  class="form-control m-b" name="line">
+																<option th:each="line : ${init['line']}" th:selected="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].lineId != null and pageInfo.configs[i - 1].lineId == line.id?true:false }" th:text="${line.lineName}" th:value="${line.id}"></option>
+															</select>
+														</div>
+														<div class="form-group">
+															<label>采样数据名称</label>
+															<select  class="form-control m-b" name="io">
+																<option th:each="ios : ${init[not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].lineId != null?pageInfo.configs[i - 1].lineId+'':init['line'][0].id+'']}" th:selected="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioId != null and pageInfo.configs[i - 1].ioId == ios.id?true:false }" th:text="${ios.remark + '-' + ios.ioName}" th:value="${ios.id}"></option>
+															</select>
+														</div>
+														<div class="form-group">
+															<label>采样数据名称</label>
+															<select  class="form-control m-b" name="io1">
+																<option th:each="ios : ${init[not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].lineId != null?pageInfo.configs[i - 1].lineId+'':init['line'][0].id+'']}" th:selected="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioId1 != null and pageInfo.configs[i - 1].ioId1 == ios.id?true:false }" th:text="${ios.remark + '-' + ios.ioName}" th:value="${ios.id}"></option>
+															</select>
+														</div>
+														<div class="form-group">
+															<div data-checke-info class="col-sm-12">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="gd" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('gd')?true:false }"  id="inlineCheckbox1">工单号</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="ygrs" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('ygrs')?true:false }"  id="inlineCheckbox3">用工人数</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="zcgs" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('zcgs')?true:false }" id="inlineCheckbo4">正常工时</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="jbgs" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('jbgs')?true:false }" id="inlineCheckbox5">加班工时</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="jbbl" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('jbbl')?true:false }" id="inlineCheckbox2">加班倍率</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="ycqk" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('ycqk')?true:false }" id="inlineCheckbox6">异常情况</label>
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="dtgdjh" th:checked="${not #lists.isEmpty(pageInfo.configs) and pageInfo.configs.size() == lay.layout_num and pageInfo.configs[i - 1].ioConfig != null and pageInfo.configs[i - 1].ioConfig.containsKey('dtgdjh')?true:false }" id="inlineCheckbox7">当天工单计划</label>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12" th:if="${lay.layout_type == 2}">
+										<div th:if="${page1 == null}" class="col-sm-6">
+											<h4 style="color: red">请建立相关页面...</h4>
+										</div>
+										<div  class="panel panel-primary" th:if="${page1 != null}">
+											<div class="panel-heading">
+												<span>轮播页面</span>
+											</div>
+											<div class="panel-body">
+												<div class="form-group">
+													<div data-checke-info class="col-sm-12">
+														<label class="checkbox-inline" th:each="p : ${page1}">
+															<input type="checkbox" th:checked="${p.exist}" th:value="${p.pageUrl}" th:data-id="${p.id}"  id="page1"><span th:text="${p.pageName}"></span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-10" th:if="${lay.layout_type == 3}" th:with="ph =${@page.selectPageInitInfo(1,#httpServletRequest.getCookies())}">
+										<div th:if="${ph == null}" class="col-sm-6">
+											<h4 style="color: red">请建立相关产线...</h4>
+										</div>
+										<div  class="panel panel-primary" th:if="${ph != null}">
+											<div class="panel-heading">
+												<span>生产平衡</span>
+											</div>
+											<div class="panel-body">
+												<div class="form-group"  >
+													<label>生产线</label>
+													<select  class="form-control m-b" name="line">
+														<option th:each="line : ${ph['line']}" th:text="${line.lineName}" th:selected="${pageInfo.pageType == 3 and not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].lineId != null and pageInfo.configs[0].lineId == line.id?true:false }"  th:value="${line.id}"></option>
+													</select>
+												</div>
+												<div class="row">
+													<div class="col-sm-6">
+														<ul class="list-group" id="gd-info-li">
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="gd" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('gd')?true:false }"  >工单号</label>
+															</li>
+															<li class="list-group-item ">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="ygrs" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('ygrs')?true:false }" >用工人数</label>
+															</li>
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="zcgs" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('zcgs')?true:false }"  >正常工时</label>
+															</li>
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="jbgs" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('jbgs')?true:false }" >加班工时</label>
+															</li>
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="jbbl" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('jbbl')?true:false }" >加班倍率</label>
+															</li>
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="ycqk" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('ycqk')?true:false }"  >异常情况</label>
+															</li>
+															<li class="list-group-item">
+																<label class="checkbox-inline">
+																	<input type="checkbox" value="dtgdjh" th:checked="${pageInfo.pageType == 3 and  not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].ioConfig != null and pageInfo.configs[0].ioConfig.containsKey('dtgdjh')?true:false }" >当天工单计划</label>
+															</li>
+														</ul>
+													</div>
+													<div class="col-sm-6" id="dev-io-ul" th:if="${not #lists.isEmpty(pageInfo.configs)}">
+														<ul class="list-group"  th:if="${  pageInfo.configs[0] != null and pageInfo.configs[0].lineId != null and  ph[pageInfo.configs[0].lineId+''] != null }">
+															<li class="list-group-item"  th:each="ios : ${ph[pageInfo.configs[0].lineId+'']}">
+																<label class="checkbox-inline">
+																	<input type="checkbox" th:value="${ios.id}" checked th:text="${ios.remark + '-' + ios.ioName}"></label>
+															</li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-10" th:if="${lay.layout_type == 4}" th:with="ph =${@page.selectPageInitInfo(1,#httpServletRequest.getCookies())}">
+										<div th:if="${ph == null}" class="col-sm-6">
+											<h4 style="color: red">请建立相关产线...</h4>
+										</div>
+										<div  class="panel panel-primary" th:if="${ph != null}">
+											<div class="panel-heading">
+												<span>生产平衡</span>
+											</div>
+											<div class="panel-body">
+												<div class="form-group"  >
+													<label>生产线</label>
+													<select  class="form-control m-b" name="line">
+														<option th:each="line : ${ph['line']}" th:text="${line.lineName}" th:selected="${pageInfo.pageType == 4 and not #lists.isEmpty(pageInfo.configs)  and pageInfo.configs[0].lineId != null and pageInfo.configs[0].lineId == line.id?true:false }"  th:value="${line.id}"></option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" id="add_page_back" style="display: none;">
+	<div class="imageBox">
+		<div class="thumbBox"></div>
+		<div class="spinner" style="display: none">Loading...</div>
+	</div>
+	<div class="action">
+		<div class="new-contentarea tc">
+			<a href="javascript:void(0)" class="upload-img"> <label for="avatar">上传图像</label> </a>
+			<input type="file" class="" name="avatar" id="avatar" accept="image/*"/>
+		</div>
+		<input type="button" id="btnCrop" class="Btnsty_peyton" value="裁切" />
+		<input type="button" id="btnZoomIn" class="Btnsty_peyton" value="+" />
+		<input type="button" id="btnZoomOut" class="Btnsty_peyton" value="-" />
+	</div>
+	<div class="cropped"></div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- bootstrap-table 表格插件 -->
+<script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.min.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/columns/bootstrap-table-fixed-columns.js}"></script>
+<!-- jquery-validate 表单验证插件 -->
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/jquery.validate.extend.js}"></script>
+<!-- jquery-validate 表单树插件 -->
+<script th:src="@{/ajax/libs/bootstrap-treetable/bootstrap-treetable.js}"></script>
+<!-- jquery-export 表格导出插件 -->
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/export/bootstrap-table-export.js}"></script>
+<script th:src="@{/ajax/libs/bootstrap-table/extensions/export/tableExport.js}"></script>
+<!-- 遮罩层 -->
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ajax/libs/iCheck/icheck.min.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/layui/layui.js}"></script>
+<script th:src="@{/ruoyi/js/common.js?v=3.2.0}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=3.2.0}"></script>
+<script th:inline="javascript"> var ctx = [[@{/}]]; </script>
+<script th:src="@{/ajax/libs/cropbox/cropbox.js}"></script>
+<script type="text/javascript">
+	var cropper;
+	$(window).load(function() {
+		var avatar = '';
+		var options = {
+			thumbBox: '.thumbBox',
+			spinner: '.spinner',
+			imgSrc: $.common.isEmpty(avatar) ? ctx + 'img/profile.jpg' : avatar
+		}
+		cropper = $('.imageBox').cropbox(options);
+		$('#avatar').on('change', function() {
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				options.imgSrc = e.target.result;
+				//根据MIME判断上传的文件是不是图片类型
+				if((options.imgSrc).indexOf("image/")==-1){
+					$.modal.alertWarning("文件格式错误，请上传图片类型,如：JPG,JPEG，PNG后缀的文件。");
+				} else {
+					cropper = $('.imageBox').cropbox(options);
+				}
+			}
+			reader.readAsDataURL(this.files[0]);
+		})
+
+		$('#btnCrop').on('click', function(){
+			var img = cropper.getDataURL();
+			$('.cropped').html('');
+			$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:64px;margin-top:4px;border-radius:64px;box-shadow:0px 0px 12px #7E7E7E;" ><p>64px*64px</p>');
+			$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:128px;margin-top:4px;border-radius:128px;box-shadow:0px 0px 12px #7E7E7E;"><p>128px*128px</p>');
+			$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:180px;margin-top:4px;border-radius:180px;box-shadow:0px 0px 12px #7E7E7E;"><p>180px*180px</p>');
+		})
+
+		$('#btnZoomIn').on('click', function(){
+			cropper.zoomIn();
+		})
+
+		$('#btnZoomOut').on('click', function(){
+			cropper.zoomOut();
+		})
+	});
+
+	function saveBack(index) {
+		var img = cropper.getBlob();
+		var formdata = new FormData();
+		formdata.append("backFile", img);
+		$.ajax({
+			url: ctx + "page/pageInfo/savePageBack",
+			data: formdata,
+			type: "post",
+			processData: false,
+			contentType: false,
+			success: function(result) {
+				if(result.msg){
+					$("#add_page_back_url").attr('src',result.msg)
+				}
+				layer.close(index);
+			}
+		})
+	}
+</script>
+<script>
+	$(function () {
+		var i = $("#layout_type option:selected").val();
+		var text = $("#layout_type option:selected").text();
+		$("#layout_title").text(text);
+		$("#detail_pane").find("div[data-detail]").hide();
+		$("#detail_pane").find("div[data-detail="+i+"]").show();
+		$("#layout_type").change(function (e) {
+			var id = $(this).val();
+			$("#detail_pane").find("div[data-detail]").hide();
+			$("#detail_pane").find("div[data-detail="+id+"]").show();
+			var t =  $("#layout_type option:selected").text();
+			$("#layout_title").text(t);
+		})
+	})
+
+	$(document).on("change","select[name='line']",function () {
+		var line_id = $(this).find("option:selected").val();
+		var than = this;
+		var layoutType = $("#layout_type").find("option:selected").attr("layout-type");
+		$.post("/device/devIo/byLineId",{"lien_id":line_id},function (data) {
+			if(data.rows){
+				if(layoutType ==  1) {
+					$(than).parent("div[class='form-group']").siblings("div[class='form-group']").find("select[name='io']").find("option").remove();
+					$(than).parent("div[class='form-group']").siblings("div[class='form-group']").find("select[name='io1']").find("option").remove();
+					var item = [];
+					data.rows.forEach(function (io) {
+						item.push("<option  value=" + io.id + ">" + io.remark + '-' + io.ioName + "</option>")
+					});
+					$(than).parent("div[class='form-group']").siblings("div[class='form-group']").find("select[name='io']").append(item);
+					$(than).parent("div[class='form-group']").siblings("div[class='form-group']").find("select[name='io1']").append(item);
+				}else if(layoutType == 3){
+					$("#dev-io-ul").find("ul[class='list-group']").find("li").remove();
+					var item = [];
+					data.rows.forEach(function (io) {
+						item.push("<li class=\"list-group-item\"> <label class=\"checkbox-inline\"> <input type=\"checkbox\" value="+io.id+" checked >"+ io.remark + '-' + io.ioName + "</label></li>")
+					});
+					$("#dev-io-ul").find("ul[class='list-group']").append(item);
+				}
+			}else{
+				layer.msg("操作异常……", {icon: $.modal.icon(modal_status.FAIL),
+							time: 500,
+							shade: [0.1, '#8F8F8F']
+						},
+						function () {
+						});
+			}
+		})
+	})
+	/** 数据提交与验证 */
+	$("#form-page-add").validate({
+		rules:{
+			pageName:{
+				required:true,
+			},
+		}
+	});
+	function submitHandler() {
+		if ($.validate.form()) {
+			edit();
+		}
+	}
+	function edit() {
+		var id = $("input[name='id']").val();
+		var pageName = $("input[name='pageName']").val();
+		var layout_type = $("#layout_type").find("option:selected");
+		var pageType = $(layout_type).attr("layout-type");
+		var layout = $(layout_type).val();
+		var pageBackImg = $("#add_page_back_url").attr('src');
+		var data ={
+			id:id,
+			pageName:pageName,
+			pageType:pageType,
+			pageLayoutType:layout,
+			pageBackImg:pageBackImg
+		}
+		switch (pageType) {
+			case "1"://宫格布局
+				data.configs = lattice(layout);
+				break;
+			case "2"://轮播布局
+				data.configs = roll(layout);
+				break;
+			case "3"://平衡布局
+				data.configs =balance(layout);
+				break;
+			case "4"://平衡布局
+				data.configs =productFile(layout);
+				break;
+		}
+		$.ajax({
+			cache : true,
+			type : "POST",
+			url : ctx + "page/pageInfo/editSave",
+			data : JSON.stringify(data),
+			contentType: "application/json",
+			async : false,
+			error : function(request) {
+				$.modal.alertError("系统错误");
+			},
+			success : function(data) {
+				layer.msg("保存成功,正在刷新数据请稍后……", {
+							icon: $.modal.icon(modal_status.SUCCESS),
+							time: 500,
+							shade: [0.1, '#8F8F8F']
+						},
+						function () {
+						});
+			}
+		});
+	}
+
+	/**
+	 * 宫格布局
+	 */
+	function lattice(layout) {
+		var item =[];
+		$("div[data-detail="+layout+"]").find("div[class='row']").find("div[class='col-sm-6']").each(function () {
+			var g ={};
+			g.lineId = $(this).find("select[name='line']").find("option:selected").val();
+			g.ioId = $(this).find("select[name='io']").find("option:selected").val();
+			g.ioId1 = $(this).find("select[name='io1']").find("option:selected").val();
+			var c ={};
+			$(this).find("div[data-checke-info]").find("input[type='checkbox']:checked").each(function () {
+				var check = $(this).val();
+				switch (check) {
+					case "gd":
+						c.gd = true;
+						break;
+					case "ygrs":
+						c.ygrs = true;
+						break
+					case "zcgs":
+						c.zcgs = true;
+						break;
+					case "jbgs":
+						c.jbgs = true;
+						break;
+					case "jbbl":
+						c.jbbl = true;
+						break;
+					case "ycqk":
+						c.ycqk = true;
+						break;
+					case "dtgdjh":
+						c.dtgdjh = true;
+						break;
+				}
+			})
+			g.devIoConfig = JSON.stringify(c);
+			item.push(g);
+		});
+		return item;
+	}
+
+	/**
+	 * 轮播布局
+	 */
+	function roll(layout) {
+		var item =[];
+		$("div[data-detail="+layout+"]").find("div[class='col-sm-12']").find("input[type='checkbox']:checked").each(function () {
+			var g ={};
+			g.devIoConfig = $(this).val();
+			g.ioId = $(this).attr("data-id");
+			item.push(g)
+		})
+		return item;
+	}
+	/**
+	 * 生产平衡
+	 */
+	function balance(layout) {
+		var item =[];
+		var g = {}
+		var c ={};
+		g.lineId = $("div[data-detail="+layout+"]").find("div[class='col-sm-10']").find("select[name='line']").find("option:selected").val();
+		$("div[data-detail="+layout+"]").find("#gd-info-li").find("input[type='checkbox']:checked").each(function () {
+			var check = $(this).val();
+			switch (check) {
+				case "gd":
+					c.gd = true;
+					break;
+				case "ygrs":
+					c.ygrs = true;
+					break
+				case "zcgs":
+					c.zcgs = true;
+					break;
+				case "jbgs":
+					c.jbgs = true;
+					break;
+				case "jbbl":
+					c.jbbl = true;
+					break;
+				case "ycqk":
+					c.ycqk = true;
+					break;
+				case "dtgdjh":
+					c.dtgdjh = true;
+					break;
+			}
+		})
+		var io=[];
+		$("div[data-detail="+layout+"]").find("#dev-io-ul").find("input[type='checkbox']:checked").each(function () {
+			io.push($(this).val());
+		})
+		c.io = io;
+		g.devIoConfig = JSON.stringify(c);
+		item.push(g);
+		return item;
+	}
+	/**
+	 * 文件
+	 */
+	function productFile(layout) {
+		var item =[];
+		var g = {}
+		g.lineId = $("div[data-detail="+layout+"]").find("div[class='col-sm-10']").find("select[name='line']").find("option:selected").val();
+		item.push(g);
+		return item;
+	}
+	/**
+	 * 背景图片编辑
+	 */
+	function pageBack() {
+		layer.open({
+			type: 1,
+			area: ['800px', ($(window).height() - 50)+ 'px'],
+			fix: false,
+			//不固定
+			maxmin: true,
+			shade: 0.3,
+			title: "背景图片",
+			content: $("#add_page_back"),
+			btn: ['确定', '关闭'],
+			// 弹层外区域关闭
+			shadeClose: true,
+			yes: function (index, layero) {
+				saveBack(index);
+			},
+			cancel: function (index) {
+				return true;
+			}
+		});
+	}
+</script>
+</body>
+</html>

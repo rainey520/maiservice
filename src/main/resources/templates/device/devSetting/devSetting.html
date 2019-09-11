@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>上传数据设置</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="panel-body">
+                        <div class="panel-group" id="accordion">
+                            <table style="width: 80%;line-height: 45px;"  cellspacing="5">
+                                <tr>
+                                    <td align="center">
+                                        <h3>硬件编号</h3>
+                                    </td>
+                                    <td  align="center">
+                                        <h3>硬件名称</h3>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="150"  align="center">信号接入口</td>
+                                    <td  align="center">数据名称</td>
+                                    <td  align="center">备注</td>
+                                </tr>
+                                <tr>
+                                    <td  align="center">
+                                        <input type="text" value="1" readonly name="" class="form-control">
+                                    </td>
+                                    <td> <input type="text" name="" class="form-control" ></td>
+                                    <td  align="center">
+                                        上传数据
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  align="center">
+                                        <input type="text" value="2" readonly name="" class="form-control">
+                                    </td>
+                                    <td> <input type="text" name="" class="form-control" ></td>
+                                    <td  align="center">
+                                        上传数据
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  align="center">
+                                        <input type="text" value="3" readonly name="" class="form-control">
+                                    </td>
+                                    <td> <input type="text" name="" class="form-control" ></td>
+                                    <td  align="center">
+                                        上传数据
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  align="center">
+                                        <input type="text" value="4" readonly name="" class="form-control">
+                                    </td>
+                                    <td> <input type="text" name="" class="form-control" ></td>
+                                    <td  align="center">
+                                        上传数据
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" align="center">
+                                        <a class="btn btn-success" >
+                                            <i class="fa fa-save"></i> 保存设置
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+</body>
+</html>

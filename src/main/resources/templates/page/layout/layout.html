@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <meta charset="utf-8">
+    <head th:include="include :: header"></head>
+    <link th:href="@{/ajax/libs/jquery-layout/jquery.layout-latest.css}" rel="stylesheet"/>
+    <link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>
+
+    <body class="gray-bg">
+        <div class="container-div ui-layout-center">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <form id="user-form">
+                        <input type="hidden" id="deptId" name="deptId">
+                        <input type="hidden" id="parentId" name="parentId">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    名称：<input type="text" name="layout_name"/>
+                                </li>
+                                <li>
+                                    布局类型：<select name="layout_type" >
+                                    <option value="-1">所有</option>
+                                    <option  value="1">宫格布局</option>
+                                    <option  value="2">轮播布局</option>
+                                    <option  value="3">生产平衡</option>
+                                    <option  value="4">图纸看板</option>
+                                </select>
+                                </li>
+                                <li class="select-time">
+                                    <label>创建时间： </label>
+                                    <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
+                                    <span>-</span>
+                                    <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+                    <a class="btn btn-success" onclick="add()" shiro:hasPermission="layout:type:add">
+                        <i class="fa fa-plus"></i> 新增
+                    </a>
+                    <a class="btn btn-primary btn-edit disabled" onclick="edit()" shiro:hasPermission="layout:type:edit">
+                        <i class="fa fa-edit"></i> 修改
+                    </a>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+                </div>
+            </div>
+        </div>
+
+        <div th:include="include :: footer"></div>
+        <script th:src="@{/ajax/libs/jquery-layout/jquery.layout-latest.js}"></script>
+        <script th:src="@{/ajax/libs/jquery-ztree/3.5/js/jquery.ztree.all-3.5.js}"></script>
+        <script th:inline="javascript">
+            var editFlag = [[${@permission.hasPermi('layout:type:edit')}]];
+            var removeFlag = [[${@permission.hasPermi('layout:type:remove')}]];
+            var prefix = ctx + "layout/type";
+
+            $(function() {
+                var panehHidden = false;
+                if ($(this).width() < 769) {
+                    panehHidden = true;
+                }
+                $('body').layout({ initClosed: panehHidden, west__size: 185 });
+                queryUserList();
+            });
+
+            function queryUserList() {
+                var options = {
+                    url: prefix + "/list",
+                    createUrl: prefix + "/add",
+                    updateUrl: prefix + "/edit/{id}",
+                    removeUrl: prefix + "/remove",
+                    sortName: "create_date",
+                    sortOrder: "desc",
+                    modalName: "页面类型",
+                    search: false,
+                    showExport: false,
+                    columns: [{
+                        checkbox: true
+                    },
+                        {
+                            field: 'id',
+                            title: '编号'
+                        },
+                        {
+                            field: 'layout_type',
+                            title: '布局类型',
+                            sortable: true,
+                            formatter:function (value,row,index) {
+                                return typeTools(row);
+                            }
+                        },
+                        {
+                            field: 'layout_name',
+                            title: '名称',
+                            sortable: true
+                        },
+                        {
+                            field: 'layout_num',
+                            title: '宫格个数',
+                            sortable: true
+                        },
+                        {
+                            field: 'layout_status',
+                            title: '状态',
+                            formatter:function (value,row,index) {
+                                return statusTools(row);
+                            }
+                        },
+                        {
+                            field: 'create_date',
+                            title: '创建时间',
+                            sortable: true
+                        },
+                        {
+                            title: '操作',
+                            align: 'center',
+                            formatter: function(value, row, index) {
+                                var actions = [];
+                                actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                                actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                                return actions.join('');
+                            }
+                        }]
+                };
+                $.table.init(options);
+            }
+
+            $('#btnExpand').click(function() {
+                $._tree.expandAll(true);
+                $(this).hide();
+                $('#btnCollapse').show();
+            });
+
+            $('#btnCollapse').click(function() {
+                $._tree.expandAll(false);
+                $(this).hide();
+                $('#btnExpand').show();
+            });
+            /* 添加 */
+            function add() {
+                $.modal.open("添加页面类型",prefix + "/add",800,340)
+            }
+            /* 修改 */
+            function edit(id) {
+                var  url =prefix + "/edit/{id}";
+                if ($.common.isNotEmpty(id)) {
+                    url = $.table._option.updateUrl.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = $.table._option.updateUrl.replace("{id}", id);
+                }
+                $.modal.open("修改页面类型",url,800,340);
+            }
+            /* 删除 */
+            function remove(id) {
+                var  url =prefix + "/remove";
+                $.modal.confirm("确定删除该条" + $.table._option.modalName + "信息吗？", function () {
+                    var data = {"id": id};
+                    $.operate.submit(url, "post", "json", data);
+                });
+            }
+            /* 状态显示 */
+            function statusTools(row) {
+                if (row.layout_status == 0) {
+                    return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.id + '\')"></i> ';
+                } else {
+                    return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
+                }
+            }
+
+            /* 显示布局类型*/
+            function typeTools(row) {
+               if(row.layout_type == 1){
+                    return　"宫格布局";
+                }else if(row.layout_type == 2){
+                    return "轮播布局";
+                }else if(row.layout_type == 3){
+                   return "生产平衡";
+               }else if(row.layout_type == 4){
+                   return "图纸看板";
+               }else {
+                   return "未知";
+               }
+            }
+
+            /* 用户管理-停用 */
+            function disable(id) {
+                $.modal.confirm("确认要停用类型吗？", function() {
+                    $.operate.post(prefix + "/changeStatus", { "id": id, "layout_status": 0 });
+                })
+            }
+
+            /* 用户管理启用 */
+            function enable(id) {
+                $.modal.confirm("确认要启用类型吗？", function() {
+                    $.operate.post(prefix + "/changeStatus", { "id": id, "layout_status": 1 });
+                })
+            }
+        </script>
+    </body>
+</html>
